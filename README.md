@@ -8,10 +8,10 @@
 [![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=master)](https://travis-ci.org/austinheap/laravel-database-encryption)
 [![Dependency Status](https://gemnasium.com/badges/github.com/austinheap/laravel-database-encryption.svg)](https://gemnasium.com/github.com/austinheap/laravel-database-encryption)
 [![Scrutinizer CI](https://scrutinizer-ci.com/g/austinheap/laravel-database-encryption/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/austinheap/laravel-database-encryption/)
-[![StyleCI](https://styleci.io/repos/106077909/shield?branch=master)](https://styleci.io/repos/106077909)
-[![Maintainability](https://api.codeclimate.com/v1/badges/ca1e10510f778f520bb5/maintainability)](https://codeclimate.com/github/austinheap/laravel-database-encryption/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/ca1e10510f778f520bb5/test_coverage)](https://codeclimate.com/github/austinheap/laravel-database-encryption/test_coverage)
-[![SensioLabs](https://insight.sensiolabs.com/projects/9fe66b91-58ad-4bc3-9ec9-37b396bb4837/mini.png)](https://insight.sensiolabs.com/projects/9fe66b91-58ad-4bc3-9ec9-37b396bb4837)
+[![StyleCI](https://styleci.io/repos/113929569/shield?branch=master)](https://styleci.io/repos/113929569)
+[![Maintainability](https://api.codeclimate.com/v1/badges/a63deda99383852c739b/maintainability)](https://codeclimate.com/github/austinheap/laravel-database-encryption/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/a63deda99383852c739b/test_coverage)](https://codeclimate.com/github/austinheap/laravel-database-encryption/test_coverage)
+[![SensioLabs](https://insight.sensiolabs.com/projects/68d37423-9a70-4f84-bfd8-b4e88ac94c1d/mini.png)](https://insight.sensiolabs.com/projects/68d37423-9a70-4f84-bfd8-b4e88ac94c1d)
 
 ## A package for automatically encrypting and decrypting Eloquent attributes in Laravel 5.5+, based on configuration settings.
 
