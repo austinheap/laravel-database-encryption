@@ -1,23 +1,25 @@
 <?php
 /**
- * Class ReEncrypt.
+ * Class MigrateEncryptionCommand.
  *
  * @author del
  */
 
-namespace AustinHeap\Database\Encryption\Console;
+namespace AustinHeap\Database\Encryption\Console\Commands;
 
+use AustinHeap\Database\Encryption\EncryptionServiceProvider;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Class MigrateEncryptionCommand.
  *
  * This console job locates data in the database that contains data encrypted
- * using a wrong/deprecated encryption key, and re-encrypts it using the correct/
- * new encryption key.
+ * using a wrong/deprecated encryption key, and re-encrypts it using the
+ * correct/new encryption key.
  *
  * It can be used to fix badly encrypted data, or can be used to decrypt data using
  * one key and re-encrypt using another key.
@@ -26,6 +28,7 @@ use Illuminate\Support\Facades\Config;
  *
  * * Over-ride this class and change the setupKeys() function to set the keys that
  *   are to be used (old_keys and new_keys) as well as the table names.
+ *
  * * Add 'App\Console\Commands\MigrateEncryptionCommand' to the $commands array in
  *   your 'App\Console\Kernel' package.
  *
@@ -77,9 +80,9 @@ class MigrateEncryptionCommand extends Command
      *
      * @return string
      */
-    protected function getElocryptPrefix()
+    protected function getEncryptionPrefix(): string
     {
-        return Config::has('elocrypt.prefix') ? Config::get('elocrypt.prefix') : '__ELOCRYPT__:';
+        return EncryptionServiceProvider::getPrefix();
     }
 
     /**
@@ -89,9 +92,9 @@ class MigrateEncryptionCommand extends Command
      *
      * @return bool
      */
-    protected function isEncrypted($value)
+    protected function isEncrypted($value): bool
     {
-        return strpos((string) $value, $this->getElocryptPrefix()) === 0;
+        return strpos((string)$value, $this->getEncryptionPrefix()) === 0;
     }
 
     /**
@@ -102,9 +105,9 @@ class MigrateEncryptionCommand extends Command
      *
      * @return string
      */
-    public function encryptedAttribute($value, $cipher)
+    public function encryptedAttribute($value, $cipher): ?string
     {
-        return $this->getElocryptPrefix().$cipher->encrypt($value);
+        return $this->getEncryptionPrefix() . $cipher->encrypt($value);
     }
 
     /**
@@ -115,9 +118,9 @@ class MigrateEncryptionCommand extends Command
      *
      * @return string
      */
-    public function decryptedAttribute($value, $cipher)
+    public function decryptedAttribute($value, $cipher): ?string
     {
-        return $cipher->decrypt(str_replace($this->getElocryptPrefix(), '', $value));
+        return $cipher->decrypt(str_replace($this->getEncryptionPrefix(), '', $value));
     }
 
     /**
@@ -143,42 +146,41 @@ class MigrateEncryptionCommand extends Command
         // Set up the keys
         $this->setupKeys();
 
-        // Check that the keys hve been set up
+        // Check that the keys have been set up
         if (empty($this->old_keys) || count($this->old_keys) == 0) {
-            $this->comment('Please over-ride this class with old_keys set correctly');
-            exit(1);
+            $error = 'You must override this class with $old_keys set correctly.';
+        } else if (empty($this->new_key)) {
+            $error = 'You must override this class with $old_keys set correctly.';
+        } else if (empty($this->tables) || count($this->tables) == 0) {
+            $error = 'You must override this class with $tables set correctly.';
         }
 
-        if (empty($this->new_key)) {
-            $this->comment('Please over-ride this class with old_keys set correctly');
-            exit(1);
-        }
-
-        if (empty($this->tables) || count($this->tables) == 0) {
-            $this->comment('Please over-ride this class with tables set correctly');
+        if (isset($error)) {
+            $this->error($error);
             exit(1);
         }
 
         // Make some encrypter objects
-        $cipher = Config::get('app.cipher');
+        $cipher        = Config::get('app.cipher');
         $baseEncrypter = new Encrypter($this->new_key, $cipher);
-        $oldEncrypter = [];
+        $oldEncrypter  = [];
+
         foreach ($this->old_keys as $key => $value) {
             $oldEncrypter[$key] = new Encrypter($value, $cipher);
         }
 
         foreach ($this->tables as $table_name) {
-            $this->comment("Fetching data from $table_name");
+            $this->comment('Fetching data from: ' . $table_name);
 
             // Get count of records
             $count = DB::table($table_name)
-                ->count();
+                       ->count();
 
             // Create a progress bar
             $bar = $this->output->createProgressBar($count);
 
             $count = number_format($count, 0, '.', ',');
-            $this->comment('Found '.$count.' records in DB. Checking encryption keys.');
+            $this->comment('Found ' . number_format($count, 0) . ' records in database; checking encryption keys.');
 
             // Get a table object
             $table_data = DB::table($table_name);
@@ -193,7 +195,7 @@ class MigrateEncryptionCommand extends Command
                     // encrypted then try to decrypt it with the base encrypter.
                     $adjust = [];
                     foreach ($datum_array as $key => $value) {
-                        if (! $this->isEncrypted($value)) {
+                        if (!$this->isEncrypted($value)) {
                             continue;
                         }
 
@@ -222,9 +224,11 @@ class MigrateEncryptionCommand extends Command
 
                             // If we got a match then we will have something in $new_value
                             if (empty($new_value)) {
-                                Log::error(__CLASS__.':'.__TRAIT__.':'.__FILE__.':'.__LINE__.':'.__FUNCTION__.':'.
-                                    "Unable to find an encryption key to match for ${table_name}.${key} ID ".$datum->id
+                                Log::error(
+                                    __CLASS__ . ':' . __TRAIT__ . ':' . __FILE__ . ':' . __LINE__ . ':' . __FUNCTION__ . ':' .
+                                    'Unable to find encryption key for: ' . $table_name->key . ' #' . $datum->id
                                 );
+
                                 continue;
                             }
 
@@ -239,8 +243,8 @@ class MigrateEncryptionCommand extends Command
                     }
 
                     DB::table($table_name)
-                        ->where('id', '=', $datum->id)
-                        ->update($adjust);
+                      ->where('id', '=', $datum->id)
+                      ->update($adjust);
                 }
 
                 // Advance the stick along one.
@@ -252,6 +256,6 @@ class MigrateEncryptionCommand extends Command
             $this->comment('');
         }
 
-        $this->comment('All tables complete');
+        $this->comment('All tables complete.');
     }
 }

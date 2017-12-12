@@ -1,9 +1,9 @@
 <?php
 /**
- * Trait Elocrypt.
+ * Trait HasEncryptedAttributes.
  */
 
-namespace AustinHeap\Database\Encryption;
+namespace AustinHeap\Database\Encryption\Traits;
 
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Config;
@@ -11,18 +11,18 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Encryption\EncryptException;
 
 /**
- * Trait Elocrypt.
+ * Trait HasEncryptedAttributes.
  *
- * Automatically encrypt and decrypt Laravel 5 Eloquent values
+ * Automatically encrypt and decrypt Laravel 5.5+ Eloquent values
  *
  * ### Example
  *
  * <code>
- *   use Delatbabel\Elocrypt\Elocrypt;
+ *   use AustinHeap\Database\Encryption\Traits\HasEncryptedAttributes;
  *
  *   class User extends Eloquent {
  *
- *       use Elocrypt;
+ *       use HasEncryptedAttributes;
  *
  *       protected $encrypts = [
  *           'address_line_1', 'first_name', 'last_name', 'postcode'
@@ -33,7 +33,7 @@ use Illuminate\Contracts\Encryption\EncryptException;
  * ### Summary of Methods in Illuminate\Database\Eloquent\Model
  *
  * This surveys the major methods in the Laravel Model class as of
- * Laravel v 5.1.12 and checks to see how those models set attributes
+ * Laravel v5.5 and checks to see how those models set attributes
  * and hence how they are affected by this trait.
  *
  * * __construct -- calls fill()
@@ -58,9 +58,9 @@ use Illuminate\Contracts\Encryption\EncryptException;
  * @see Illuminate\Support\Facades\Crypt
  * @see Illuminate\Contracts\Encryption\Encrypter
  * @see Illuminate\Encryption\Encrypter
- * @link http://laravel.com/docs/5.1/eloquent
+ * @link http://laravel.com/docs/5.5/eloquent
  */
-trait Encryption
+trait HasEncryptedAttributes
 {
     //
     // Methods below here are native to the trait.
@@ -71,9 +71,9 @@ trait Encryption
      *
      * @return string
      */
-    protected function getElocryptPrefix()
+    protected function getEncryptionPrefix()
     {
-        return Config::has('elocrypt.prefix') ? Config::get('elocrypt.prefix') : '__ELOCRYPT__:';
+        return Config::has('encryption.prefix') ? Config::get('encryption.prefix') : '__ENCRYPTION__:';
     }
 
     /**
@@ -99,7 +99,7 @@ trait Encryption
      */
     protected function isEncrypted($value)
     {
-        return strpos((string) $value, $this->getElocryptPrefix()) === 0;
+        return strpos((string) $value, $this->getEncryptionPrefix()) === 0;
     }
 
     /**
@@ -114,7 +114,7 @@ trait Encryption
      */
     public function encryptedAttribute($value)
     {
-        return $this->getElocryptPrefix().Crypt::encrypt($value);
+        return $this->getEncryptionPrefix().Crypt::encrypt($value);
     }
 
     /**
@@ -129,7 +129,7 @@ trait Encryption
      */
     public function decryptedAttribute($value)
     {
-        return Crypt::decrypt(str_replace($this->getElocryptPrefix(), '', $value));
+        return Crypt::decrypt(str_replace($this->getEncryptionPrefix(), '', $value));
     }
 
     /**
