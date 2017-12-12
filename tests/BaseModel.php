@@ -1,14 +1,17 @@
 <?php
 /**
- * Class BaseModel.
+ * tests/BaseModel.php
  *
- * @author del
+ * @package     laravel-database-encryption
+ * @link        https://github.com/austinheap/laravel-database-encryption
+ * @author      Austin Heap <me@austinheap.com>
+ * @version     v0.0.1
  */
 
+namespace AustinHeap\Database\Encryption\Tests;
+
 /**
- * Class BaseModel.
- *
- * Abstract base model class to be used for testing.
+ * Class BaseModel
  */
 abstract class BaseModel implements \Illuminate\Contracts\Support\Arrayable
 {

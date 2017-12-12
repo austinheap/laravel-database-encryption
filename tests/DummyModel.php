@@ -1,24 +1,31 @@
 <?php
 /**
- * Class DummyModel.
+ * tests/DummyModel.php
  *
- * @author del
+ * @package     laravel-database-encryption
+ * @link        https://github.com/austinheap/laravel-database-encryption
+ * @author      Austin Heap <me@austinheap.com>
+ * @version     v0.0.1
  */
+
+namespace AustinHeap\Database\Encryption\Tests;
+
+use AustinHeap\Database\Encryption\EncryptionDefaults;
+use AustinHeap\Database\Encryption\EncryptionFacade;
+use AustinHeap\Database\Encryption\Traits\HasEncryptedAttributes;
 use Illuminate\Container\Container;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * Class DummyModel.
- *
- * Dummy model class to be used for testing.
+ * DummyModel
  */
 class DummyModel extends BaseModel
 {
-    use \Delatbabel\Elocrypt\Elocrypt;
+    use HasEncryptedAttributes;
 
-    /** @var array list of attributes to encrypt */
-    protected $encrypts = ['encrypt_me'];
+    /** @var array list of attributes that are encrypted */
+    protected $encrypted = ['encrypt_me'];
 
     /** @var Encrypter */
     protected $encrypter;
@@ -30,7 +37,7 @@ class DummyModel extends BaseModel
         $app = new Container();
         $app->singleton('app', 'Illuminate\Container\Container');
         $app->singleton('config', 'Illuminate\Config\Repository');
-        $app['config']->set('elocrypt.prefix', '__ELOCRYPT__:');
+        $app['config']->set('database-encryption.prefix', EncryptionDefaults::DEFAULT_PREFIX);
         Facade::setFacadeApplication($app);
 
         parent::__construct($attributes);
@@ -48,7 +55,7 @@ class DummyModel extends BaseModel
      */
     public function encryptedAttribute($value)
     {
-        return $this->getElocryptPrefix().$this->encrypter->encrypt($value);
+        return EncryptionFacade::getInstance()->buildHeader($value) . $this->encrypter->encrypt($value);
     }
 
     /**
@@ -63,6 +70,6 @@ class DummyModel extends BaseModel
      */
     public function decryptedAttribute($value)
     {
-        return $this->encrypter->decrypt(str_replace($this->getElocryptPrefix(), '', $value));
+        return $this->encrypter->decrypt(str_replace(EncryptionFacade::getInstance()->buildHeader($value), '', $value));
     }
 }

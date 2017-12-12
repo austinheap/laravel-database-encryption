@@ -72,6 +72,37 @@ use Log;
 trait HasEncryptedAttributes
 {
     /**
+     * Decrypt encrypted data before it is processed by cast attribute
+     *
+     * @param $key
+     * @param $value
+     *
+     * @return mixed
+     */
+    protected function castAttribute($key, $value)
+    {
+        return parent::castAttribute($key, $this->doDecryptAttribute($key, $value));
+    }
+
+    /**
+     * Get the attributes that have been changed since last sync.
+     *
+     * @return array
+     */
+    public function getDirty()
+    {
+        $dirty = [];
+
+        foreach ($this->attributes as $key => $value) {
+            if (!$this->originalIsEquivalent($key, $value)) {
+                $dirty[$key] = $value;
+            }
+        }
+
+        return $dirty;
+    }
+
+    /**
      * Get the configuration setting for the prefix used to determine if a string is encrypted.
      *
      * @return string
@@ -244,18 +275,5 @@ trait HasEncryptedAttributes
     public function getAttributes()
     {
         return $this->doDecryptAttributes(parent::getAttributes());
-    }
-
-    /**
-     * Decrypt encrypted data before it is processed by cast attribute
-     *
-     * @param $key
-     * @param $value
-     *
-     * @return mixed
-     */
-    protected function castAttribute($key, $value)
-    {
-        return parent::castAttribute($key, $this->doDecryptAttribute($key, $value));
     }
 }
