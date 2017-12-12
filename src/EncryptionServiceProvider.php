@@ -9,10 +9,6 @@ declare(strict_types = 1);
 
 namespace AustinHeap\Database\Encryption;
 
-use Config;
-
-//use DatabaseEncryption;
-
 /**
  * EncryptionServiceProvider.
  *
@@ -40,16 +36,15 @@ class EncryptionServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function boot(): void
     {
-        $this->publishes([
-                             __DIR__ . '/../config/database-encryption.php' => config_path('database-encryption.php'),
-                         ]);
+        $this->publishes([__DIR__ . '/../config/database-encryption.php' => config_path('database-encryption.php')]);
 
         if (!defined('LARAVEL_DATABASE_ENCRYPTION_VERSION')) {
             define('LARAVEL_DATABASE_ENCRYPTION_VERSION', EncryptionHelper::VERSION);
         }
 
-        foreach (['dbencrypt', 'dbdecrypt'] as $function) {
-            throw_if(!function_exists($function), 'The provider did not boot helper function: "' . $function . '".');
+        foreach (EncryptionDefaults::DEFAULT_HELPERS as $helper) {
+            throw_if(!empty($helper) && !function_exists($helper),
+                     'The provider did not boot helper function: "' . $helper . '".');
         }
     }
 
@@ -60,54 +55,12 @@ class EncryptionServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function register(): void
     {
-        $this->mergeConfigFrom(
-            __DIR__ . '/../config/database-encryption.php', 'database-encryption'
-        );
+        $this->mergeConfigFrom(__DIR__ . '/../config/database-encryption.php', 'database-encryption');
 
         $this->app->singleton(EncryptionFacade::getFacadeAccessor(), function ($app) {
             return new EncryptionHelper();
         });
 
         $this->commands([\AustinHeap\Database\Encryption\Console\Commands\MigrateEncryptionCommand::class]);
-    }
-
-    /**
-     * Get the package version.
-     *
-     * @return string
-     */
-    public function getVersion(): string
-    {
-        return ''; //DatabaseEncryption::getVersion();
-    }
-
-    /**
-     * Get the package version for a prefix.
-     *
-     * @return string
-     */
-    public function getVersionForPrefix(): string
-    {
-        return ''; //DatabaseEncryption::getVersionForPrefix();
-    }
-
-    /**
-     * Get the prefix.
-     *
-     * @return string
-     */
-    public function getPrefix(): string
-    {
-        return ''; //DatabaseEncryption::getVersionForPrefix();
-    }
-
-    /**
-     * Get the control characters.
-     *
-     * @return array
-     */
-    public function getControlCharacters(?string $type = null): array
-    {
-        return []; //DatabaseEncryption::getControlCharacters();
     }
 }

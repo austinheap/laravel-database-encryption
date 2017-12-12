@@ -20,11 +20,11 @@ return [
     /**
      * Prefix used in attribute header.
      *
-     * Default: __ENCRYPTED-%VERSION%__:
+     * Default: __LARAVEL-DATABASE-ENCRYPTED-%VERSION%__
      *
      * @var null|string
      */
-    'prefix'             => env('DB_ENCRYPTION_PREFIX', '__ENCRYPTED-%VERSION%__:'),
+    'prefix'             => env('DB_ENCRYPTION_PREFIX', '__LARAVEL-DATABASE-ENCRYPTED-%VERSION%__'),
 
     /**
      * Enable header versioning.
@@ -36,7 +36,7 @@ return [
     'versioning'         => env('DB_ENCRYPTION_VERSIONING', true),
 
     /**
-     * Control characters used in header payload.
+     * Control characters used by header.
      *
      * Default: [
      *     'header' => [

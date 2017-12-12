@@ -18,7 +18,7 @@ use Config;
  * @link        https://packagist.org/packages/austinheap/laravel-database-encryption
  * @link        https://austinheap.github.io/laravel-database-encryption/classes/AustinHeap.Database.Encryption.EncryptionHelper.html
  */
-class EncryptionHelper
+class EncryptionHelper extends EncryptionDefaults
 {
     /**
      * Internal version number.
@@ -26,26 +26,6 @@ class EncryptionHelper
      * @var string
      */
     public const VERSION = '0.0.1';
-
-    /**
-     * Internal default control characters.
-     *
-     * @var array
-     */
-    private const DEFAULT_CONTROL_CHARACTERS = [
-        'header' => [
-            'start' => 1,
-            'stop'  => 4,
-        ],
-        'prefix' => [
-            'start' => 2,
-            'stop'  => 3,
-        ],
-        'type'   => [
-            'start' => 30,
-            'stop'  => 23,
-        ],
-    ];
 
     /**
      * Private enable flag cache.
@@ -69,13 +49,6 @@ class EncryptionHelper
     private $versionPartsCache = null;
 
     /**
-     * Private default control characters cache.
-     *
-     * @var null|array
-     */
-    private $defaultControlCharactersCache = null;
-
-    /**
      * Private control characters cache.
      *
      * @var null|array
@@ -83,18 +56,18 @@ class EncryptionHelper
     private $controlCharactersCache = null;
 
     /**
-     * Private default prefix cache.
-     *
-     * @var null|string
-     */
-    private $defaultPrefixCache = null;
-
-    /**
      * Private prefix cache.
      *
      * @var null|string
      */
     private $prefixCache = null;
+
+    /**
+     * Private header prefix cache.
+     *
+     * @var null|string
+     */
+    private $headerPrefixCache = null;
 
     /**
      * Get the package version.
@@ -117,7 +90,7 @@ class EncryptionHelper
     {
         if (is_null($this->enabledCache)) {
             $enabled            = Config('database-encryption.enabled', null);
-            $this->enabledCache = !is_null($enabled) && is_bool($enabled) ? $enabled : false;
+            $this->enabledCache = !is_null($enabled) && is_bool($enabled) ? $enabled : self::DEFAULT_ENABLED;
         }
 
         return $this->enabledCache;
@@ -142,7 +115,7 @@ class EncryptionHelper
     {
         if (is_null($this->versioningCache)) {
             $versioning            = Config('database-encryption.versioning', null);
-            $this->versioningCache = !is_null($versioning) && is_bool($versioning) ? $versioning : true;
+            $this->versioningCache = !is_null($versioning) && is_bool($versioning) ? $versioning : self::DEFAULT_VERSIONING;
         }
 
         return $this->versioningCache;
@@ -197,7 +170,47 @@ class EncryptionHelper
      */
     public function getVersionForPrefix(): string
     {
-        return 'V-' . implode('-', $this->getVersionParts(2));
+        return 'VERSION-' . implode('-', $this->getVersionParts(2));
+    }
+
+    /**
+     * Get the configured header prefix.
+     *
+     * @return string
+     */
+    public function getHeaderPrefix(): string
+    {
+        if (is_null($this->headerPrefixCache)) {
+            $characters = $this->getControlCharacters();
+
+            $this->headerPrefixCache = $characters['header']['start']['string'] .
+                                       $characters['prefix']['start']['string'] .
+                                       $this->getPrefix() .
+                                       $characters['prefix']['stop']['string'];
+        }
+
+        return $this->headerPrefixCache;
+    }
+
+    /**
+     * Build a header string, optionally with an object.
+     *
+     * @return string
+     */
+    public function buildHeader($object = null): string
+    {
+        $characters = $this->getControlCharacters();
+
+        return $characters['header']['start']['string'] .
+               $characters['prefix']['start']['string'] .
+               $this->getPrefix() .
+               $characters['prefix']['stop']['string'] .
+               (is_null($object) ? '' :
+                   $characters['type']['start']['string'] .
+                   gettype($object) . '[' . (is_object($object) ? get_class($object) : 'native') . ']' .
+                   $characters['type']['stop']['string']
+               ) .
+               $characters['header']['stop']['string'];
     }
 
     /**
@@ -209,9 +222,9 @@ class EncryptionHelper
     {
         if (is_null($this->prefixCache)) {
             $prefix = Config::get('database-encryption.prefix', null);
-            $prefix = !empty($prefix) && is_string($prefix) ? $prefix : '__ENCRYPTED-%VERSION%__:';
+            $prefix = !empty($prefix) && is_string($prefix) ? $prefix : self::DEFAULT_PREFIX;
 
-            $this->prefixCache = $this->getVersioning() ?
+            $this->prefixCache = $this->isVersioning() ?
                 str_replace('%VERSION%', $this->getVersionForPrefix(), $prefix) :
                 $prefix;
         }
@@ -227,7 +240,7 @@ class EncryptionHelper
     public function getDefaultPrefix(): string
     {
         if (is_null($this->defaultPrefixCache)) {
-            $this->defaultPrefixCache = '__ENCRYPTED-%VERSION%__:';
+            $this->defaultPrefixCache = self::DEFAULT_PREFIX;
         }
 
         return $this->defaultPrefixCache;
@@ -243,7 +256,8 @@ class EncryptionHelper
         $characters = $this->getDefaultControlCharacters();
 
         if (!is_null($type)) {
-            throw_if(!array_key_exists($type, $characters), 'Control characters do not exist for $type: "' . (empty($type) ? '(empty)' : $type) . '".');
+            throw_if(!array_key_exists($type, $characters),
+                     'Control characters do not exist for $type: "' . (empty($type) ? '(empty)' : $type) . '".');
 
             return $characters[$type];
         }
@@ -265,7 +279,7 @@ class EncryptionHelper
                 $characters[$control] = [];
 
                 foreach (['start', 'stop'] as $mode) {
-                    $characters[$control][$mode] = $this->buildCharacterArray($config[$mode]);
+                    $characters[$control][$mode] = $this->buildCharacterArray($config[$mode], true);
                 };
             }
 
@@ -273,7 +287,8 @@ class EncryptionHelper
         }
 
         if (!is_null($type)) {
-            throw_if(!array_key_exists($type, $this->defaultControlCharactersCache), 'Default control characters do not exist for $type: "' . (empty($type) ? '(empty)' : $type) . '".');
+            throw_if(!array_key_exists($type, $this->defaultControlCharactersCache),
+                     'Default control characters do not exist for $type: "' . (empty($type) ? '(empty)' : $type) . '".');
 
             return $this->defaultControlCharactersCache[$type];
         }
@@ -288,7 +303,8 @@ class EncryptionHelper
      */
     private function buildCharacterArray($character, bool $default = false): array
     {
-        throw_if(!is_int($character) && !is_string($character), 'Cannot build character array from $character type: "' . gettype($character) . '".');
+        throw_if(!is_int($character) && !is_string($character),
+                 'Cannot build character array from $character type: "' . gettype($character) . '".');
 
         return [
             'int'     => is_int($character) ? $character : ord($character),
