@@ -312,4 +312,14 @@ class EncryptionHelper extends EncryptionDefaults
             'default' => $default,
         ];
     }
+
+    /**
+     * Get the singleton of this class.
+     *
+     * @return EncryptionHelper
+     */
+    public static function getInstance(): self
+    {
+        return EncryptionFacade::getInstance();
+    }
 }
