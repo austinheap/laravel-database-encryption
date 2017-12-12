@@ -2,7 +2,6 @@
 /**
  * src/Console/Commands/MigrateEncryptionCommand.php.
  *
- * @package     AustinHeap\Database\Encryption\Console\Commands
  * @author      Austin Heap <me@austinheap.com>
  * @version     v0.0.1
  */

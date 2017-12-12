@@ -2,7 +2,6 @@
 /**
  * src/EncryptionFacade.php.
  *
- * @package     AustinHeap\Database\Encryption
  * @author      Austin Heap <me@austinheap.com>
  * @version     v0.0.1
  */
@@ -55,7 +54,7 @@ class EncryptionFacade extends \Illuminate\Support\Facades\Facade
         $instance = static::getInstance();
 
         throw_if(! $instance, RuntimeException::class, 'A facade root has not been set.');
-        throw_if(! method_exists($instance, $method), RuntimeException::class, 'Method "' . $method . '" does not exist on "' . get_class($instance) . '".');
+        throw_if(! method_exists($instance, $method), RuntimeException::class, 'Method "'.$method.'" does not exist on "'.get_class($instance).'".');
 
         return $instance->$method(...$args);
     }

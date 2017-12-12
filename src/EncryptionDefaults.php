@@ -2,7 +2,6 @@
 /**
  * src/EncryptionDefaults.php.
  *
- * @package     AustinHeap\Database\Encryption
  * @author      Austin Heap <me@austinheap.com>
  * @version     v0.0.1
  */
@@ -104,7 +103,7 @@ abstract class EncryptionDefaults
      */
     public static function isDisabledDefault(): bool
     {
-        return !static::isEnabledDefault();
+        return ! static::isEnabledDefault();
     }
 
     /**
@@ -120,7 +119,7 @@ abstract class EncryptionDefaults
      */
     public static function isVersionlessDefault(): bool
     {
-        return !static::isVersioningDefault();
+        return ! static::isVersioningDefault();
     }
 
     /**

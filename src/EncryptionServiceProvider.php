@@ -2,7 +2,6 @@
 /**
  * src/EncryptionServiceProvider.php.
  *
- * @package     AustinHeap\Database\Encryption
  * @author      Austin Heap <me@austinheap.com>
  * @version     v0.0.1
  */
