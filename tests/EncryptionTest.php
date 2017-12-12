@@ -22,7 +22,6 @@ class EncryptionTest extends TestCase
         $prefix           = self::callProtectedMethod($model, 'getEncryptionPrefix');
 
         $this->assertEquals($attributes['dont_encrypt'], $model->attributes['dont_encrypt']);
-        dump($model->attributes['encrypt_me']);
         $this->assertStringStartsWith($prefix, $model->attributes['encrypt_me']);
         $this->assertEquals($attributes['encrypt_me'], $model_attributes['encrypt_me']);
     }

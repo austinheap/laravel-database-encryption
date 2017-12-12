@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpdoc>
-    <title>laravel-security-txt docs</title>
+    <title>laravel-database-encryption docs</title>
     <parser>
-        <default-package-name>\AustinHeap\Security\Txt</default-package-name>
+        <default-package-name>\AustinHeap\Database\Encryption</default-package-name>
         <target>build/docs</target>
         <encoding>utf8</encoding>
         <markers>
