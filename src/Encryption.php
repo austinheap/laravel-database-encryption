@@ -2,12 +2,13 @@
 /**
  * Trait Elocrypt.
  */
+
 namespace AustinHeap\Database\Encryption;
 
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Encryption\EncryptException;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Crypt;
 
 /**
  * Trait Elocrypt.
@@ -113,7 +114,7 @@ trait Encryption
      */
     public function encryptedAttribute($value)
     {
-        return $this->getElocryptPrefix() . Crypt::encrypt($value);
+        return $this->getElocryptPrefix().Crypt::encrypt($value);
     }
 
     /**
