@@ -1,6 +1,6 @@
 <?php
 /**
- * tests/BaseModel.php
+ * tests/Models/BaseModel.php
  *
  * @package     laravel-database-encryption
  * @link        https://github.com/austinheap/laravel-database-encryption
@@ -8,7 +8,7 @@
  * @version     v0.0.1
  */
 
-namespace AustinHeap\Database\Encryption\Tests;
+namespace AustinHeap\Database\Encryption\Tests\Models;
 
 /**
  * Class BaseModel

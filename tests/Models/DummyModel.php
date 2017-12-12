@@ -1,6 +1,6 @@
 <?php
 /**
- * tests/DummyModel.php
+ * tests/Models/DummyModel.php
  *
  * @package     laravel-database-encryption
  * @link        https://github.com/austinheap/laravel-database-encryption
@@ -8,7 +8,7 @@
  * @version     v0.0.1
  */
 
-namespace AustinHeap\Database\Encryption\Tests;
+namespace AustinHeap\Database\Encryption\Tests\Models;
 
 use AustinHeap\Database\Encryption\EncryptionDefaults;
 use AustinHeap\Database\Encryption\EncryptionFacade;

@@ -1,6 +1,6 @@
 <?php
 /**
- * tests/EncryptionTest.php
+ * tests/BasicTest.php
  *
  * @package     laravel-database-encryption
  * @link        https://github.com/austinheap/laravel-database-encryption
@@ -8,12 +8,14 @@
  * @version     v0.0.1
  */
 
-namespace AustinHeap\Database\Encryption\Tests;
+namespace AustinHeap\Database\Encryption\Tests\Models;
+
+use AustinHeap\Database\Encryption\Tests\TestCase;
 
 /**
- * EncryptionTest
+ * BasicTest
  */
-class EncryptionTest extends TestCase
+class BasicTest extends TestCase
 {
     protected function doTest($attributes)
     {
