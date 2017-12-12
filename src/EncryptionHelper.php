@@ -5,7 +5,7 @@
  * @author      Austin Heap <me@austinheap.com>
  * @version     v0.0.1
  */
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AustinHeap\Database\Encryption;
 
@@ -76,7 +76,7 @@ class EncryptionHelper extends EncryptionDefaults
      */
     public function getVersion(): string
     {
-        throw_if(!defined('LARAVEL_DATABASE_ENCRYPTION_VERSION'), 'The provider did not boot.');
+        throw_if(! defined('LARAVEL_DATABASE_ENCRYPTION_VERSION'), 'The provider did not boot.');
 
         return LARAVEL_DATABASE_ENCRYPTION_VERSION;
     }
@@ -89,8 +89,8 @@ class EncryptionHelper extends EncryptionDefaults
     public function isEnabled(): bool
     {
         if (is_null($this->enabledCache)) {
-            $enabled            = Config('database-encryption.enabled', null);
-            $this->enabledCache = !is_null($enabled) && is_bool($enabled) ? $enabled : self::DEFAULT_ENABLED;
+            $enabled = Config('database-encryption.enabled', null);
+            $this->enabledCache = ! is_null($enabled) && is_bool($enabled) ? $enabled : self::DEFAULT_ENABLED;
         }
 
         return $this->enabledCache;
@@ -103,7 +103,7 @@ class EncryptionHelper extends EncryptionDefaults
      */
     public function isDisabled(): bool
     {
-        return !$this->isEnabled();
+        return ! $this->isEnabled();
     }
 
     /**
@@ -114,8 +114,8 @@ class EncryptionHelper extends EncryptionDefaults
     public function isVersioning(): bool
     {
         if (is_null($this->versioningCache)) {
-            $versioning            = Config('database-encryption.versioning', null);
-            $this->versioningCache = !is_null($versioning) && is_bool($versioning) ? $versioning : self::DEFAULT_VERSIONING;
+            $versioning = Config('database-encryption.versioning', null);
+            $this->versioningCache = ! is_null($versioning) && is_bool($versioning) ? $versioning : self::DEFAULT_VERSIONING;
         }
 
         return $this->versioningCache;
@@ -128,7 +128,7 @@ class EncryptionHelper extends EncryptionDefaults
      */
     public function isVersionless(): bool
     {
-        return !$this->isVersioning();
+        return ! $this->isVersioning();
     }
 
     /**
@@ -138,17 +138,17 @@ class EncryptionHelper extends EncryptionDefaults
      */
     public function getVersionParts(?int $padding = null): array
     {
-        if (!is_array($this->versionPartsCache)) {
+        if (! is_array($this->versionPartsCache)) {
             $this->versionPartsCache = [];
         }
 
-        $key = 'padding-' . (is_null($padding) ? 'null' : (string)$padding);
+        $key = 'padding-'.(is_null($padding) ? 'null' : (string) $padding);
 
-        if (!array_key_exists($key, $this->versionPartsCache)) {
+        if (! array_key_exists($key, $this->versionPartsCache)) {
             $parts = explode('.', $this->getVersion());
 
             $this->versionPartsCache[$key] = array_map(function ($part) use ($padding) {
-                $part = (string)$part;
+                $part = (string) $part;
 
                 if (is_null($padding)) {
                     return $part;
@@ -156,7 +156,7 @@ class EncryptionHelper extends EncryptionDefaults
 
                 $length = strlen($part);
 
-                return $length == $padding ? $part : str_repeat('0', $padding - $length) . $part;
+                return $length == $padding ? $part : str_repeat('0', $padding - $length).$part;
             }, $parts);
         }
 
@@ -170,7 +170,7 @@ class EncryptionHelper extends EncryptionDefaults
      */
     public function getVersionForPrefix(): string
     {
-        return 'VERSION-' . implode('-', $this->getVersionParts(2));
+        return 'VERSION-'.implode('-', $this->getVersionParts(2));
     }
 
     /**
@@ -183,9 +183,9 @@ class EncryptionHelper extends EncryptionDefaults
         if (is_null($this->headerPrefixCache)) {
             $characters = $this->getControlCharacters();
 
-            $this->headerPrefixCache = $characters['header']['start']['string'] .
-                                       $characters['prefix']['start']['string'] .
-                                       $this->getPrefix() .
+            $this->headerPrefixCache = $characters['header']['start']['string'].
+                                       $characters['prefix']['start']['string'].
+                                       $this->getPrefix().
                                        $characters['prefix']['stop']['string'];
         }
 
@@ -201,15 +201,15 @@ class EncryptionHelper extends EncryptionDefaults
     {
         $characters = $this->getControlCharacters();
 
-        return $characters['header']['start']['string'] .
-               $characters['prefix']['start']['string'] .
-               $this->getPrefix() .
-               $characters['prefix']['stop']['string'] .
+        return $characters['header']['start']['string'].
+               $characters['prefix']['start']['string'].
+               $this->getPrefix().
+               $characters['prefix']['stop']['string'].
                (is_null($object) ? '' :
-                   $characters['type']['start']['string'] .
-                   gettype($object) . '[' . (is_object($object) ? get_class($object) : 'native') . ']' .
+                   $characters['type']['start']['string'].
+                   gettype($object).'['.(is_object($object) ? get_class($object) : 'native').']'.
                    $characters['type']['stop']['string']
-               ) .
+               ).
                $characters['header']['stop']['string'];
     }
 
@@ -222,7 +222,7 @@ class EncryptionHelper extends EncryptionDefaults
     {
         if (is_null($this->prefixCache)) {
             $prefix = Config::get('database-encryption.prefix', null);
-            $prefix = !empty($prefix) && is_string($prefix) ? $prefix : self::DEFAULT_PREFIX;
+            $prefix = ! empty($prefix) && is_string($prefix) ? $prefix : self::DEFAULT_PREFIX;
 
             $this->prefixCache = $this->isVersioning() ?
                 str_replace('%VERSION%', $this->getVersionForPrefix(), $prefix) :
@@ -255,9 +255,9 @@ class EncryptionHelper extends EncryptionDefaults
     {
         $characters = $this->getDefaultControlCharacters();
 
-        if (!is_null($type)) {
-            throw_if(!array_key_exists($type, $characters),
-                     'Control characters do not exist for $type: "' . (empty($type) ? '(empty)' : $type) . '".');
+        if (! is_null($type)) {
+            throw_if(! array_key_exists($type, $characters),
+                     'Control characters do not exist for $type: "'.(empty($type) ? '(empty)' : $type).'".');
 
             return $characters[$type];
         }
@@ -280,15 +280,15 @@ class EncryptionHelper extends EncryptionDefaults
 
                 foreach (['start', 'stop'] as $mode) {
                     $characters[$control][$mode] = $this->buildCharacterArray($config[$mode], true);
-                };
+                }
             }
 
             $this->defaultControlCharactersCache = $characters;
         }
 
-        if (!is_null($type)) {
-            throw_if(!array_key_exists($type, $this->defaultControlCharactersCache),
-                     'Default control characters do not exist for $type: "' . (empty($type) ? '(empty)' : $type) . '".');
+        if (! is_null($type)) {
+            throw_if(! array_key_exists($type, $this->defaultControlCharactersCache),
+                     'Default control characters do not exist for $type: "'.(empty($type) ? '(empty)' : $type).'".');
 
             return $this->defaultControlCharactersCache[$type];
         }
@@ -303,8 +303,8 @@ class EncryptionHelper extends EncryptionDefaults
      */
     private function buildCharacterArray($character, bool $default = false): array
     {
-        throw_if(!is_int($character) && !is_string($character),
-                 'Cannot build character array from $character type: "' . gettype($character) . '".');
+        throw_if(! is_int($character) && ! is_string($character),
+                 'Cannot build character array from $character type: "'.gettype($character).'".');
 
         return [
             'int'     => is_int($character) ? $character : ord($character),

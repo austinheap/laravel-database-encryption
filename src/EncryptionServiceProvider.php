@@ -5,7 +5,7 @@
  * @author      Austin Heap <me@austinheap.com>
  * @version     v0.0.1
  */
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AustinHeap\Database\Encryption;
 
@@ -36,15 +36,15 @@ class EncryptionServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function boot(): void
     {
-        $this->publishes([__DIR__ . '/../config/database-encryption.php' => config_path('database-encryption.php')]);
+        $this->publishes([__DIR__.'/../config/database-encryption.php' => config_path('database-encryption.php')]);
 
-        if (!defined('LARAVEL_DATABASE_ENCRYPTION_VERSION')) {
+        if (! defined('LARAVEL_DATABASE_ENCRYPTION_VERSION')) {
             define('LARAVEL_DATABASE_ENCRYPTION_VERSION', EncryptionHelper::VERSION);
         }
 
         foreach (EncryptionDefaults::DEFAULT_HELPERS as $helper) {
-            throw_if(!empty($helper) && !function_exists($helper),
-                     'The provider did not boot helper function: "' . $helper . '".');
+            throw_if(! empty($helper) && ! function_exists($helper),
+                     'The provider did not boot helper function: "'.$helper.'".');
         }
     }
 
@@ -55,7 +55,7 @@ class EncryptionServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/database-encryption.php', 'database-encryption');
+        $this->mergeConfigFrom(__DIR__.'/../config/database-encryption.php', 'database-encryption');
 
         $this->app->singleton(EncryptionFacade::getFacadeAccessor(), function ($app) {
             return new EncryptionHelper();
