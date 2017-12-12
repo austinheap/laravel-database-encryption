@@ -9,10 +9,9 @@ declare(strict_types=1);
 
 namespace AustinHeap\Database\Encryption\Traits;
 
+use Config, Crypt, Log;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Encryption\EncryptException;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Crypt;
 
 /**
  * HasEncryptedAttributes.
@@ -132,9 +131,9 @@ trait HasEncryptedAttributes
      *
      * @param string $value
      *
-     * @return string
+     * @return null|string
      */
-    public function decryptedAttribute($value)
+    public function decryptedAttribute($value): ?string
     {
         return Crypt::decrypt(str_replace($this->getEncryptionPrefix(), '', $value));
     }
@@ -146,13 +145,13 @@ trait HasEncryptedAttributes
      *
      * @return void
      */
-    protected function doEncryptAttribute($key)
+    protected function doEncryptAttribute($key): void
     {
         if ($this->shouldEncrypt($key) && !$this->isEncrypted($this->attributes[$key])) {
             try {
                 $this->attributes[$key] = $this->encryptedAttribute($this->attributes[$key]);
-            } catch (EncryptException $e) {
-                // intentionally blank
+            } catch (EncryptException $exception) {
+                Log::debug('Ignored exception in ' . __CLASS__ . ':' . __FUNCTION__ . ': ' . $exception->getMessage());
             }
         }
     }

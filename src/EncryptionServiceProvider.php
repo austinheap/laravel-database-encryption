@@ -9,8 +9,7 @@ declare(strict_types = 1);
 
 namespace AustinHeap\Database\Encryption;
 
-use Exception;
-use Illuminate\Support\Facades\Config;
+use Config, DatabaseEncryption, Exception;
 
 /**
  * EncryptionServiceProvider.
@@ -21,54 +20,6 @@ use Illuminate\Support\Facades\Config;
  */
 class EncryptionServiceProvider extends \Illuminate\Support\ServiceProvider
 {
-    /**
-     * Internal version number.
-     *
-     * @var string
-     */
-    public const VERSION = '0.0.1';
-
-    /**
-     * Internal default control characters.
-     *
-     * @var array
-     */
-    private const DEFAULT_CONTROL_CHARACTERS = [
-        'header' => [
-            'start' => 1,
-            'stop'  => 4,
-        ],
-        'prefix' => [
-            'start' => 2,
-            'stop'  => 3,
-        ],
-        'type'   => [
-            'start' => 30,
-            'stop'  => 23,
-        ],
-    ];
-
-    /**
-     * Internal default control characters cache.
-     *
-     * @var null|array
-     */
-    private static $defaultControlCharactersCache = null;
-
-    /**
-     * Internal control characters cache.
-     *
-     * @var null|array
-     */
-    private static $controlCharactersCache = null;
-
-    /**
-     * Internal prefix cache.
-     *
-     * @var null|array
-     */
-    private static $prefixCache = null;
-
     /**
      * Indicates if loading of the provider is deferred.
      *
@@ -88,7 +39,7 @@ class EncryptionServiceProvider extends \Illuminate\Support\ServiceProvider
     public function boot(): void
     {
         $this->publishes([
-                             __DIR__ . '/../config/encryption.php' => config_path('encryption.php'),
+                             __DIR__ . '/../config/database-encryption.php' => config_path('database-encryption.php'),
                          ]);
 
         if (!defined('LARAVEL_DATABASE_ENCRYPTION_VERSION')) {
@@ -107,9 +58,15 @@ class EncryptionServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function register(): void
     {
-        $this->commands([
-                            \AustinHeap\Database\Encryption\Console\Commands\MigrateEncryptionCommand::class,
-                        ]);
+        $this->mergeConfigFrom(
+            __DIR__ . '/../config/database-encryption.php', 'database-encryption'
+        );
+
+        $this->app->singleton(EncryptionFacade::getFacadeRoot(), function ($app) {
+            return new EncryptionHelper();
+        });
+
+        $this->commands([\AustinHeap\Database\Encryption\Console\Commands\MigrateEncryptionCommand::class]);
     }
 
     /**
@@ -117,34 +74,9 @@ class EncryptionServiceProvider extends \Illuminate\Support\ServiceProvider
      *
      * @return string
      */
-    public static function getVersion(): string
+    public function getVersion(): string
     {
-        if (!defined('LARAVEL_DATABASE_ENCRYPTION_VERSION')) {
-            throw new Exception('laravel-database-encryption v' . self::getVersion() . ' did not boot.');
-        }
-
-        return LARAVEL_DATABASE_ENCRYPTION_VERSION;
-    }
-
-    /**
-     * Get the package version in parts.
-     *
-     * @return array
-     */
-    public static function getVersionParts($padding = null): array
-    {
-        $parts = explode('.', self::getVersion());
-
-        return array_map(function ($part) use ($padding) {
-            $part = (string)$part;
-            if (is_null($padding)) {
-                return $part;
-            } else {
-                $length = strlen($part);
-
-                return $length == $padding ? $part : str_repeat('0', $padding - $length) . $part;
-            }
-        }, $parts);
+        return DatabaseEncryption::getVersion();
     }
 
     /**
@@ -200,45 +132,5 @@ class EncryptionServiceProvider extends \Illuminate\Support\ServiceProvider
         }
 
         return $controls;
-    }
-
-    /**
-     * Get the default control characters.
-     *
-     * @return array
-     */
-    public static function getDefaultControlCharacters(): array
-    {
-        if (is_null(self::$defaultControlCharactersCache)) {
-            $controls = [];
-
-            foreach (self::DEFAULT_CONTROL_CHARACTERS as $control => $config) {
-                $controls[$control] = [];
-
-                foreach (['start', 'stop'] as $mode) {
-                    $controls[$control][$mode] = [
-                        'int'     => $config[$mode],
-                        'string'  => chr($config[$mode]),
-                        'default' => true,
-                    ];
-                };
-            }
-
-            self::$defaultControlCharactersCache = $controls;
-        }
-
-        return self::$defaultControlCharactersCache;
-    }
-
-    /**
-     * Get the encryption versioning setting from configuration.
-     *
-     * @return bool
-     */
-    public static function getEncryptionVersioning(): bool
-    {
-        $versioning = Config::get('encryption.versioning', null);
-
-        return !is_null($versioning) && is_bool($versioning) ? $versioning : true;
     }
 }
