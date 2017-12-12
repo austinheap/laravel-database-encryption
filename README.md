@@ -1,248 +1,165 @@
-# Eloquent Encryption/Decryption for Laravel 5
+# Laravel 5.5+ Database Encryption Package
 
-[![Build Status](https://travis-ci.org/delatbabel/elocryptfive.png?branch=master)](https://travis-ci.org/delatbabel/elocryptfive)
-[![StyleCI](https://styleci.io/repos/42222272/shield)](https://styleci.io/repos/42222272)
-[![Latest Stable Version](https://poser.pugx.org/delatbabel/elocryptfive/version.png)](https://packagist.org/packages/ddpro/elocryptfive)
-[![Total Downloads](https://poser.pugx.org/delatbabel/elocryptfive/d/total.png)](https://packagist.org/packages/delatbabel/elocryptfive)
+![laravel-database-encryption banner from the documentation](docs/img/banner-1544x500.png?raw=true)
 
-Automatically encrypt and decrypt Laravel 5 Eloquent values.
+[![License](https://img.shields.io/packagist/l/austinheap/laravel-database-encryption.svg)](https://github.com/austinheap/laravel-database-encryption/blob/master/LICENSE.md)
+[![Current Release](https://img.shields.io/github/release/austinheap/laravel-database-encryption.svg)](https://github.com/austinheap/laravel-database-encryption/releases)
+[![Total Downloads](https://img.shields.io/packagist/dt/austinheap/laravel-database-encryption.svg)](https://packagist.org/packages/austinheap/laravel-database-encryption)
+[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=master)](https://travis-ci.org/austinheap/laravel-database-encryption)
+[![Dependency Status](https://gemnasium.com/badges/github.com/austinheap/laravel-database-encryption.svg)](https://gemnasium.com/github.com/austinheap/laravel-database-encryption)
+[![Scrutinizer CI](https://scrutinizer-ci.com/g/austinheap/laravel-database-encryption/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/austinheap/laravel-database-encryption/)
+[![StyleCI](https://styleci.io/repos/106077909/shield?branch=master)](https://styleci.io/repos/106077909)
+[![Maintainability](https://api.codeclimate.com/v1/badges/ca1e10510f778f520bb5/maintainability)](https://codeclimate.com/github/austinheap/laravel-database-encryption/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/ca1e10510f778f520bb5/test_coverage)](https://codeclimate.com/github/austinheap/laravel-database-encryption/test_coverage)
+[![SensioLabs](https://insight.sensiolabs.com/projects/9fe66b91-58ad-4bc3-9ec9-37b396bb4837/mini.png)](https://insight.sensiolabs.com/projects/9fe66b91-58ad-4bc3-9ec9-37b396bb4837)
 
-## READ THIS FIRST
+## A package for automatically encrypting and decrypting Eloquent attributes in Laravel 5.5+, based on configuration settings.
 
-Encrypted values are usually longer than plain text values.  Sometimes much longer.  You
-may find that the column widths in your database tables need to be extended to store the
-encrypted values.
+The purpose of this project is to create a set-it-and-forget-it package that can be
+installed without much effort to get a Laravel project compliant with the current
+[`security.txt`](https://securitytxt.org/) spec. It is therefore highly opinionated
+but built for configuration.
 
-If you are encrypting long strings such as JSON blobs then the encrypted values may be
-longer than a VARCHAR field can support, and you may need to extend your column types to
-TEXT or LONGTEXT.
+When enabled, it allows access to all clients and serves up the `security.txt`.
+Otherwise, it operates almost identically to Laravel's default configuration,
+denying access to all clients.
 
-## What Does This Do?
+[`security.txt`](https://github.com/securitytxt) is a [draft](https://tools.ietf.org/html/draft-foudil-securitytxt-00)
+"standard" which allows websites to define security policies. This "standard"
+sets clear guidelines for security researchers on how to report security issues,
+and allows bug bounty programs to define a scope. Security.txt is the equivalent
+of `robots.txt`, but for security issues.
 
-This encrypts and decrypts columns stored in database tables in Laravel applications
-transparently, by encrypting data as it is stored in the model attributes and decrypting
-data as it is recalled from the model attributes.
-
-All data that is encrypted is prefixed with a tag (default `__ELOCRYPT__:`) so that
-encrypted data can be easily identified.
-
-This supports columns that store either encrypted or non-encrypted data to make migration
-easier.  Data can be read from columns correctly regardless of whether it is encrypted or
-not but will be automatically encrypted when it is saved back into those columns.
-
-## Requirements and Recommendations
-
-* Laravel 5.1 LTS (untested on 5.2 and later versions)
-* PHP > 5.6.0 (need the `hash_equals()` function which was added in PHP 5.6)
-* PHP [openssl extension](http://php.net/manual/en/book.openssl.php).
-* A working OpenSSL implementation on your OS.  OpenSSL comes pre-built with most Linux distributions and other forms of Unix such as *BSD.  There may or may not be a working OpenSSL implementation on a Windows system depending on how your LA?P stack was built.  I cannot offer support for installing or using ElocryptFive on systems that do not have an OpenSSL library.
-
-## Contributors
-
-This is Darren Taylor's Laravel 4 "elocrypt" package, ported to Laravel 5.  I have made the
-following additions/changes:
-
-* Do the encryption in separate functions (encryptedAttribute and decryptedAttribute rather than
-  inside __set and  __get, and call those from setAttribute and getAttribute as that's more
-  appropriate for Laravel 5 with the new casts features.  So, for example,
-  you can add a field to `$casts` and also to `$encrypts` so that an array can be cast to a JSON
-  string first, and then encrypted.  It should also work for Lumen.
-
-* Prefix all encrypted values with a tag string (default `__ELOCRYPT__:` ) so that plain text
-  data can be detected and handled correctly.  The task of writing a script to traverse your
-  existing database and update all plain text data to encrypted data is left to the reader.
-
-The original Laravel 4 package is here: https://github.com/dtisgodsson/elocrypt
-
-Thanks to Brandon Surowiec for some extensive refactoring of the internal methods.
+There is [documentation for `laravel-database-encryption` online](https://austinheap.github.io/laravel-database-encryption/),
+the source of which is in the [`docs/`](https://github.com/austinheap/laravel-database-encryption/tree/master/docs)
+directory. The most logical place to start are the [docs for the `HasEncryptedAttributes` trait](https://austinheap.github.io/laravel-database-encryption/classes/AustinHeap.Database.Encryption.Traits.HasEncryptedAttributes.html).
 
 ## Installation
 
-This package can be installed via Composer by adding the following to your `composer.json` file:
+### Step 1: Composer
 
+Via Composer command line:
+
+```bash
+$ composer require austinheap/laravel-database-encryption
 ```
+
+Or add the package to your `composer.json`:
+
+```json
+{
     "require": {
-        "delatbabel/elocryptfive": "~1.0"
+        "austinheap/laravel-database-encryption": "0.0.1"
     }
+}
 ```
 
-You must then run the following command:
+### Step 2: Remove any existing `security.txt`
 
-```
-    composer update
+Laravel doesn't ship with a default `security.txt` file. If you have added one, it needs to be removed for the configured route to work.
+
+```bash
+$ rm public/.well-known/security.txt
 ```
 
-Once `composer update` has finished, then add the service provider to the `providers` array in your
-application's `config/app.php` file:
+### Step 3: Enable the package (Optional)
+
+This package implements Laravel 5.5's auto-discovery feature. After you install it the package provider and facade are added automatically.
+
+If you would like to declare the provider and/or alias explicitly, then add the service provider to your `config/app.php`:
+
+Add the service provider to your `config/app.php`:
 
 ```php
-    'providers' => [
-        ...
-        Delatbabel\Elocrypt\ElocryptServiceProvider::class,
-    ],
+'providers' => [
+    //
+    AustinHeap\Database\Encryption\EncryptionServiceProvider::class,
+];
 ```
 
-
-## Configuration
-
-Publish the config file with:
-
-```
-    php artisan vendor:publish --provider='Delatbabel\Elocrypt\ElocryptServiceProvider'
-```
-
-You may then change the default prefix tag string in your `.env` config file:
-
-```
-    ELOCRYPT_PREFIX=__This_is_encrypted_data__
-```
-
-or alternatively you can change the default right in the `config/elocrypt.php` file:
+And then add the alias to your `config/app.php`:
 
 ```php
-    return [
-        'prefix' => env('ELOCRYPT_PREFIX', '__This_is_encrypted_data__')
-    ]
+'aliases' => [
+    //
+    'DatabaseEncryption' => AustinHeap\Database\EncryptionFacade::class,
+];
 ```
 
-## Usage
+### Step 4: Configure the package
 
-Simply reference the Elocrypt trait in any Eloquent Model you wish to apply encryption to and define
-an `$encrypts` array containing a list of the attributes to encrypt.
+Publish the package config file:
 
-For example:
+```bash
+$ php artisan vendor:publish --provider="AustinHeap\Database\Encryption\EncryptionServiceProvider"
+```
+
+You may now enable automagic encryption and decryption of Eloquent models by editing the `config/database-encryption.php` file:
 
 ```php
-    use Delatbabel\Elocrypt\Elocrypt;
-
-    class User extends Eloquent {
-
-        use Elocrypt;
-       
-        /**
-         * The attributes that should be encrypted on save.
-         *
-         * @var array
-         */
-        protected $encrypts = [
-            'address_line_1', 'first_name', 'last_name', 'postcode'
-        ];
-    }
+return [
+    'enabled' => env('DATABASE_ENCRYPTION_ENABLED', true),
+];
 ```
 
-You can combine `$casts` and `$encrypts` to store encrypted arrays.  An array will first be converted to JSON
-and then encrypted.
+Or simply setting the the `DATABASE_ENCRYPTION_ENABLED` environment variable to true, via the Laravel `.env` file or hosting environment.
 
-For example:
-
-```php
-    use Delatbabel\Elocrypt\Elocrypt;
-
-    class User extends Eloquent {
-
-        use Elocrypt;
-
-        protected $casts = ['extended_data' => 'array'];
-
-        protected $encrypts = ['extended_data'];
-    }
+```bash
+DATABASE_ENCRYPTION_ENABLED=true
 ```
 
-# How it Works?
+## Full `.env` Example
 
-By including the Elocrypt trait, the setAttribute() and getAttributeFromArray() methods provided
-by Eloquent are overridden to include an additional step. This additional step simply checks
-whether the attribute being set or get is included in the `$encrypts` array on the model,
-and either encrypts/decrypts it accordingly.
+After installing the package with composer, simply add the following to your .env file:
 
-## Summary of Methods in Illuminate\Database\Eloquent\Model
-
-This surveys the major methods in the Laravel Model class as of
-Laravel v 5.1.12 and checks to see how those models set attributes
-and hence how they are affected by this trait.
-
-* constructor -- calls fill()
-* fill() -- calls setAttribute() which has been extended to encrypt the data.
-* hydrate() -- TBD
-* create() -- calls constructor and hence fill()
-* firstOrCreate -- calls constructor
-* firstOrNew -- calls constructor
-* updateOrCreate -- calls fill()
-* update() -- calls fill()
-* toArray() -- calls attributesToArray()
-* jsonSerialize() -- calls toArray()
-* toJson() -- calls toArray()
-* attributesToArray() -- calls getArrayableAttributes().
-* getAttribute -- calls getAttributeValue()
-* getAttributeValue -- calls getAttributeFromArray()
-* getAttributeFromArray -- calls getArrayableAttributes()
-* getArrayableAttributes -- has been extended here to decrypt the data.
-* setAttribute -- has been extended here to encrypt the data.
-* getAttributes -- has been extended here to decrypt the data.
-
-## Keys and IVs
-
-The key and encryption algorithm used are as per the Laravel Encrypter service, and defined in `config/app.php`
-as follows:
-
-```php
-    'key' => env('APP_KEY', 'SomeRandomString'),
-
-    'cipher' => 'AES-256-CBC',
+```bash
+SECURITY_TXT_ENABLED=true
+SECURITY_TXT_CACHE=true
+SECURITY_TXT_CONTACT=security@your-site.com
+SECURITY_TXT_ENCRYPTION=https://your-site.com/pgp.key
+SECURITY_TXT_DISCLOSURE=full
+SECURITY_TXT_ACKNOWLEDGEMENT=https://your-site.com/security-champions
 ```
 
-I recommend generating a random 32 character string for the encryption key, and using AES-256-CBC as the cipher
-for encrypting data.  If you are encrypting long data strings then AES-256-CBC-HMAC-SHA1 will be better.
+Now point your browser to `http://your-site.com/.well-known/security.txt` and you should see:
 
-The IV for encryption is randomly generated.
+```
+# Our security address
+Contact: me@austinheap.com
 
-# FAQ
+# Our PGP key
+Encryption: http://some.url/pgp.key
 
-## Manually Encrypting Data
+# Our disclosure policy
+Disclosure: Full
 
-You can manually encrypt or decrypt data using the `encryptedAttribute()` and `decryptedAttribute()` functions.
-An example is as follows:
+# Our public acknowledgement
+Acknowledgement: http://some.url/acks
 
-```php
-    $user = new User();
-    $encryptedEmail = $user->encryptedAttribute(Input::get("email"));
+#
+# Generated by "laravel-database-encryption" v0.4.0 (https://github.com/austinheap/laravel-database-encryption/releases/tag/v0.4.0)
+# using "php-security-txt" v0.4.0 (https://github.com/austinheap/php-security-txt/releases/tag/v0.4.0)
+# in 0.041008 seconds on 2017-11-22 20:31:25.
+#
+# Cache is enabled with key "cache:AustinHeap\Security\Txt\SecurityTxt".
+#
 ```
 
-## Encryption and Searching
+## References
 
-You will not be able to search on encrypted data, because it is encrypted.  Comparing encrypted values
-would require a fixed IV which introduces security issues.
+- [A Method for Web Security Policies (draft-foudil-securitytxt-00)](https://tools.ietf.org/html/draft-foudil-securitytxt-00)
+- [php-security-txt](https://github.com/austinheap/php-security-txt)
 
-If you need to search on data then either:
+## Credits
 
-* Leave it unencrypted, or
-* Hash the data and search on the hash instead of the encrypted value.  Use a well known hash algorithm
-  such as SHA256.
+This is a fork of [InfusionWeb/laravel-robots-route](https://github.com/InfusionWeb/laravel-robots-route),
+which was a fork of [ellisthedev/laravel-5-robots](https://github.com/ellisthedev/laravel-5-robots),
+which was a fork of [jayhealey/Robots](https://github.com/jayhealey/Robots),
+which was based on earlier work.
 
-You could store both a hashed and an encrypted value, use the hashed value for searching and retrieve
-the encrypted value for other uses.
+- [ellisio/laravel-5-robots Contributors](https://github.com/ellisio/laravel-5-robots/graphs/contributors)
+- [InfusionWeb/laravel-robots-route Contributors](https://github.com/InfusionWeb/laravel-robots-route/contributors)
 
-## Encryption and Authentication
+## License
 
-The same problem with searching applies for authentication because authentication requires a user search.
-
-If you have an authentication table where you encrypt the user data including the login data (for example the email),
-this will prevent Auth::attempt from working.  For example this code will not work:
-
-```php
-    $auth = Auth::attempt(array(
-                "email"     =>  Input::get("email"),
-                "password"  =>  Input::get("password"),
-    ), $remember);
-```
-
-As for searching, comparing the encrypted email will not work, because it would require a fixed IV
-which introduces security issues.
-
-What you will need to do instead is to hash the email address using a well known hash function (e.g.
-SHA256 or RIPE-MD160) rather than encrypt it, and then in the Auth::attempt function you can compare
-the hashes.
-
-If you need access to the email address then you could store both a hashed and an encrypted email
-address, use the hashed value for authentication and retrieve the encrypted value for other uses
-(e.g. sending emails).
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
