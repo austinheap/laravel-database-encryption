@@ -2,7 +2,6 @@
 /**
  * src/Traits/HasEncryptedAttributes.php.
  *
- * @package     AustinHeap\Database\Encryption\Traits
  * @author      Austin Heap <me@austinheap.com>
  * @version     v0.0.1
  */
@@ -10,7 +9,9 @@ declare(strict_types=1);
 
 namespace AustinHeap\Database\Encryption\Traits;
 
-use Crypt, DatabaseEncryption, Log;
+use Log;
+use Crypt;
+use DatabaseEncryption;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Encryption\EncryptException;
 
@@ -148,7 +149,7 @@ trait HasEncryptedAttributes
      */
     public function encryptedAttribute($value): ?string
     {
-        return DatabaseEncryption::buildHeader($value) . Crypt::encrypt($value);
+        return DatabaseEncryption::buildHeader($value).Crypt::encrypt($value);
     }
 
     /**
