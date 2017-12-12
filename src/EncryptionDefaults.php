@@ -5,7 +5,7 @@
  * @author      Austin Heap <me@austinheap.com>
  * @version     v0.0.1
  */
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AustinHeap\Database\Encryption;
 
@@ -58,7 +58,6 @@ abstract class EncryptionDefaults
             'stop'  => 23,
         ],
     ];
-
 
     /**
      * Shared default helpers.

@@ -35,7 +35,7 @@ class EncryptionFacade extends \Illuminate\Support\Facades\Facade
      */
     public static function getInstance()
     {
-        return app(EncryptionFacade::getFacadeAccessor());
+        return app(self::getFacadeAccessor());
     }
 
     /**

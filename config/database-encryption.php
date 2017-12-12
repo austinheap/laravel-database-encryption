@@ -8,7 +8,7 @@
 
 return [
 
-    /**
+    /*
      * Enable database encryption.
      *
      * Default: false
@@ -17,7 +17,7 @@ return [
      */
     'enabled'            => env('DB_ENCRYPTION_ENABLED', false),
 
-    /**
+    /*
      * Prefix used in attribute header.
      *
      * Default: __LARAVEL-DATABASE-ENCRYPTED-%VERSION%__
@@ -26,7 +26,7 @@ return [
      */
     'prefix'             => env('DB_ENCRYPTION_PREFIX', '__LARAVEL-DATABASE-ENCRYPTED-%VERSION%__'),
 
-    /**
+    /*
      * Enable header versioning.
      *
      * Default: true
@@ -35,7 +35,7 @@ return [
      */
     'versioning'         => env('DB_ENCRYPTION_VERSIONING', true),
 
-    /**
+    /*
      * Control characters used by header.
      *
      * Default: [

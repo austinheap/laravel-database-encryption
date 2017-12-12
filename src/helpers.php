@@ -43,7 +43,7 @@ if (! function_exists('database_encrypt')) {
      */
     function database_encrypt(?string $value = null): ?string
     {
-        return __FUNCTION__ . ': FUNCTION-NOT-IMPLEMENTED';
+        return __FUNCTION__.': FUNCTION-NOT-IMPLEMENTED';
     }
 }
 
@@ -73,7 +73,7 @@ if (! function_exists('database_decrypt')) {
      */
     function database_decrypt(string $value): ?string
     {
-        return __FUNCTION__ . ': FUNCTION-NOT-IMPLEMENTED';
+        return __FUNCTION__.': FUNCTION-NOT-IMPLEMENTED';
     }
 }
 
