@@ -2,6 +2,7 @@
 /**
  * src/EncryptionDefaults.php.
  *
+ * @package     AustinHeap\Database\Encryption
  * @author      Austin Heap <me@austinheap.com>
  * @version     v0.0.1
  */
@@ -89,4 +90,60 @@ abstract class EncryptionDefaults
      * @var null|string
      */
     protected $defaultPrefixCache = null;
+
+    /**
+     * @return bool
+     */
+    public static function isEnabledDefault(): bool
+    {
+        return static::DEFAULT_ENABLED;
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isDisabledDefault(): bool
+    {
+        return !static::isEnabledDefault();
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isVersioningDefault(): bool
+    {
+        return static::DEFAULT_VERSIONING;
+    }
+
+    /**
+     * @return bool
+     */
+    public static function isVersionlessDefault(): bool
+    {
+        return !static::isVersioningDefault();
+    }
+
+    /**
+     * @return string
+     */
+    public static function getPrefixDefault(): string
+    {
+        return static::DEFAULT_PREFIX;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getControlCharactersDefault(): array
+    {
+        return static::DEFAULT_CONTROL_CHARACTERS;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getHelpersDefault(): array
+    {
+        return static::DEFAULT_HELPERS;
+    }
 }

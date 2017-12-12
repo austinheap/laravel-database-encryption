@@ -2,6 +2,7 @@
 /**
  * src/Traits/HasEncryptedAttributes.php.
  *
+ * @package     AustinHeap\Database\Encryption\Traits
  * @author      Austin Heap <me@austinheap.com>
  * @version     v0.0.1
  */
@@ -9,9 +10,7 @@ declare(strict_types=1);
 
 namespace AustinHeap\Database\Encryption\Traits;
 
-use Log;
-use Crypt;
-use AustinHeap\Database\Encryption\EncryptionFacade;
+use Crypt, DatabaseEncryption, Log;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Encryption\EncryptException;
 
@@ -108,7 +107,7 @@ trait HasEncryptedAttributes
      */
     protected function getEncryptionPrefix(): string
     {
-        return EncryptionFacade::getInstance()->getHeaderPrefix();
+        return DatabaseEncryption::getHeaderPrefix();
     }
 
     /**
@@ -149,7 +148,7 @@ trait HasEncryptedAttributes
      */
     public function encryptedAttribute($value): ?string
     {
-        return EncryptionFacade::getInstance()->buildHeader($value).Crypt::encrypt($value);
+        return DatabaseEncryption::buildHeader($value) . Crypt::encrypt($value);
     }
 
     /**
@@ -164,7 +163,7 @@ trait HasEncryptedAttributes
      */
     public function decryptedAttribute($value): ?string
     {
-        $characters = EncryptionFacade::getInstance()->getControlCharacters('header');
+        $characters = DatabaseEncryption::getControlCharacters('header');
         $value = substr($value, strpos($value, $characters['stop']['string']));
 
         return Crypt::decrypt($value);

@@ -2,7 +2,7 @@
 <phpdoc>
     <title>laravel-database-encryption docs</title>
     <parser>
-        <default-package-name>\AustinHeap\Database\Encryption</default-package-name>
+        <default-package-name>AustinHeap\Database\Encryption</default-package-name>
         <target>build/docs</target>
         <encoding>utf8</encoding>
         <markers>

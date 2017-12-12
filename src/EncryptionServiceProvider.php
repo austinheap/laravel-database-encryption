@@ -2,6 +2,7 @@
 /**
  * src/EncryptionServiceProvider.php.
  *
+ * @package     AustinHeap\Database\Encryption
  * @author      Austin Heap <me@austinheap.com>
  * @version     v0.0.1
  */
@@ -42,7 +43,7 @@ class EncryptionServiceProvider extends \Illuminate\Support\ServiceProvider
             define('LARAVEL_DATABASE_ENCRYPTION_VERSION', EncryptionHelper::VERSION);
         }
 
-        foreach (EncryptionDefaults::DEFAULT_HELPERS as $helper) {
+        foreach (EncryptionDefaults::getHelpersDefault() as $helper) {
             throw_if(! empty($helper) && ! function_exists($helper),
                      'The provider did not boot helper function: "'.$helper.'".');
         }

@@ -20,7 +20,6 @@ use DatabaseEncryption as EncryptionRealFacade;
  */
 class FacadeTest extends TestCase
 {
-
     public function testManualConstruct()
     {
         $facade = new EncryptionFacade();
@@ -45,7 +44,8 @@ class FacadeTest extends TestCase
 
     public function testFacade()
     {
-        $this->assertEquals(app('DatabaseEncryption'), EncryptionRealFacade::getInstance());
+        $this->assertSame(app('DatabaseEncryption'), EncryptionRealFacade::getInstance());
+        $this->assertEquals(EncryptionHelper::VERSION, EncryptionRealFacade::getVersion());
     }
 
     public function testCallStaticInvalid()
@@ -57,8 +57,8 @@ class FacadeTest extends TestCase
                 return null;
             }
         };
+
         $this->expectException(RuntimeException::class);
         $class::staticMethodThatDoesntExist();
     }
-
 }

@@ -2,12 +2,15 @@
 /**
  * src/EncryptionFacade.php.
  *
+ * @package     AustinHeap\Database\Encryption
  * @author      Austin Heap <me@austinheap.com>
  * @version     v0.0.1
  */
 declare(strict_types=1);
 
 namespace AustinHeap\Database\Encryption;
+
+use RuntimeException;
 
 /**
  * EncryptionFacade.
@@ -49,11 +52,10 @@ class EncryptionFacade extends \Illuminate\Support\Facades\Facade
      */
     public static function __callStatic($method, $args)
     {
-        $instance = static::getFacadeRoot();
+        $instance = static::getInstance();
 
-        if (! $instance) {
-            throw new \RuntimeException('A facade root has not been set.');
-        }
+        throw_if(! $instance, RuntimeException::class, 'A facade root has not been set.');
+        throw_if(! method_exists($instance, $method), RuntimeException::class, 'Method "' . $method . '" does not exist on "' . get_class($instance) . '".');
 
         return $instance->$method(...$args);
     }

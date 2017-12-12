@@ -2,6 +2,7 @@
 /**
  * src/helpers.php.
  *
+ * @package     AustinHeap\Database\Encryption
  * @author      Austin Heap <me@austinheap.com>
  * @version     v0.1.0
  */
