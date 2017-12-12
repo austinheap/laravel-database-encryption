@@ -41,10 +41,7 @@
         "laravel": {
             "providers": [
                 "AustinHeap\\Database\\Encryption\\EncryptionServiceProvider"
-            ],
-            "aliases": {
-                "DatabaseEncryption": "AustinHeap\\Database\\Encryption\\EncryptionFacade"
-            }
+            ]
         }
     }
 }

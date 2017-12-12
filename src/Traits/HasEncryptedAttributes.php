@@ -1,17 +1,21 @@
 <?php
 /**
- * Trait HasEncryptedAttributes.
+ * src/Traits/HasEncryptedAttributes.php.
+ *
+ * @author      Austin Heap <me@austinheap.com>
+ * @version     v0.0.1
  */
+declare(strict_types=1);
 
 namespace AustinHeap\Database\Encryption\Traits;
 
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Encryption\EncryptException;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Crypt;
 
 /**
- * Trait HasEncryptedAttributes.
+ * HasEncryptedAttributes.
  *
  * Automatically encrypt and decrypt Laravel 5.5+ Eloquent values
  *
@@ -24,7 +28,7 @@ use Illuminate\Contracts\Encryption\EncryptException;
  *
  *       use HasEncryptedAttributes;
  *
- *       protected $encrypts = [
+ *       protected $encrypted = [
  *           'address_line_1', 'first_name', 'last_name', 'postcode'
  *       ];
  *   }
@@ -36,29 +40,32 @@ use Illuminate\Contracts\Encryption\EncryptException;
  * Laravel v5.5 and checks to see how those models set attributes
  * and hence how they are affected by this trait.
  *
- * * __construct -- calls fill()
- * * fill() -- calls setAttribute() which has been overridden.
- * * hydrate() -- TBD
- * * create() -- calls constructor and hence fill()
- * * firstOrCreate -- calls constructor
- * * firstOrNew -- calls constructor
- * * updateOrCreate -- calls fill()
- * * update() -- calls fill()
- * * toArray() -- calls attributesToArray()
- * * jsonSerialize() -- calls toArray()
- * * toJson() -- calls toArray()
- * * attributesToArray() -- has been over-ridden here.
- * * getAttribute -- calls getAttributeValue()
- * * getAttributeValue -- calls getAttributeFromArray()
- * * getAttributeFromArray -- calls getArrayableAttributes
- * * getArrayableAttributes -- has been over-ridden here.
- * * setAttribute -- has been over-ridden here.
- * * getAttributes -- has been over-ridden here.
+ * - __construct -- calls fill()
+ * - fill() -- calls setAttribute() which has been overridden.
+ * - hydrate() -- TBD
+ * - create() -- calls constructor and hence fill()
+ * - firstOrCreate -- calls constructor
+ * - firstOrNew -- calls constructor
+ * - updateOrCreate -- calls fill()
+ * - update() -- calls fill()
+ * - toArray() -- calls attributesToArray()
+ * - jsonSerialize() -- calls toArray()
+ * - toJson() -- calls toArray()
+ * - attributesToArray() -- has been over-ridden here.
+ * - getAttribute -- calls getAttributeValue()
+ * - getAttributeValue -- calls getAttributeFromArray()
+ * - getAttributeFromArray -- calls getArrayableAttributes
+ * - getArrayableAttributes -- has been over-ridden here.
+ * - setAttribute -- has been over-ridden here.
+ * - getAttributes -- has been over-ridden here.
  *
- * @see Illuminate\Support\Facades\Crypt
- * @see Illuminate\Contracts\Encryption\Encrypter
- * @see Illuminate\Encryption\Encrypter
- * @link http://laravel.com/docs/5.5/eloquent
+ * @see         Illuminate\Support\Facades\Crypt
+ * @see         Illuminate\Contracts\Encryption\Encrypter
+ * @see         Illuminate\Encryption\Encrypter
+ * @link        http://laravel.com/docs/5.5/eloquent
+ * @link        https://github.com/austinheap/laravel-database-encryption
+ * @link        https://packagist.org/packages/austinheap/laravel-database-encryption
+ * @link        https://austinheap.github.io/laravel-database-encryption/classes/AustinHeap.Database.Encryption.EncryptionServiceProvider.html
  */
 trait HasEncryptedAttributes
 {
@@ -71,9 +78,9 @@ trait HasEncryptedAttributes
      *
      * @return string
      */
-    protected function getEncryptionPrefix()
+    protected function getEncryptionPrefix(): string
     {
-        return Config::has('encryption.prefix') ? Config::get('encryption.prefix') : '__ENCRYPTION__:';
+        return \AustinHeap\Database\Encryption\EncryptionServiceProvider::getEncryptionPrefix();
     }
 
     /**
@@ -83,9 +90,9 @@ trait HasEncryptedAttributes
      *
      * @return bool
      */
-    protected function shouldEncrypt($key)
+    protected function shouldEncrypt($key): bool
     {
-        $encrypt = isset($this->encrypts) ? $this->encrypts : $this->encryptable;
+        $encrypt = isset($this->encrypted) ? $this->encrypted : $this->encryptable;
 
         return in_array($key, $encrypt);
     }
@@ -97,9 +104,9 @@ trait HasEncryptedAttributes
      *
      * @return bool
      */
-    protected function isEncrypted($value)
+    protected function isEncrypted($value): bool
     {
-        return strpos((string) $value, $this->getEncryptionPrefix()) === 0;
+        return strpos((string)$value, $this->getEncryptionPrefix()) === 0;
     }
 
     /**
@@ -110,11 +117,11 @@ trait HasEncryptedAttributes
      *
      * @param string $value
      *
-     * @return string
+     * @return null|string
      */
-    public function encryptedAttribute($value)
+    public function encryptedAttribute($value): ?string
     {
-        return $this->getEncryptionPrefix().Crypt::encrypt($value);
+        return $this->getEncryptionPrefix() . Crypt::encrypt($value);
     }
 
     /**
@@ -141,10 +148,11 @@ trait HasEncryptedAttributes
      */
     protected function doEncryptAttribute($key)
     {
-        if ($this->shouldEncrypt($key) && ! $this->isEncrypted($this->attributes[$key])) {
+        if ($this->shouldEncrypt($key) && !$this->isEncrypted($this->attributes[$key])) {
             try {
                 $this->attributes[$key] = $this->encryptedAttribute($this->attributes[$key]);
             } catch (EncryptException $e) {
+                // intentionally blank
             }
         }
     }
@@ -235,5 +243,17 @@ trait HasEncryptedAttributes
     public function getAttributes()
     {
         return $this->doDecryptAttributes(parent::getAttributes());
+    }
+
+    /**
+     * Decrypt encrypted data before it is processed by cast attribute
+     * @param $key
+     * @param $value
+     *
+     * @return mixed
+     */
+    protected function castAttribute($key, $value)
+    {
+        return parent::castAttribute($key, $this->doDecryptAttribute($key, $value));
     }
 }

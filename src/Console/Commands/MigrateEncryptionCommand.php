@@ -1,14 +1,15 @@
 <?php
 /**
- * Class MigrateEncryptionCommand.
+ * src/Console/Commands/MigrateEncryptionCommand.php.
  *
- * @author del
+ * @author      Austin Heap <me@austinheap.com>
+ * @version     v0.0.1
  */
+declare(strict_types=1);
 
 namespace AustinHeap\Database\Encryption\Console\Commands;
 
 use AustinHeap\Database\Encryption\EncryptionServiceProvider;
-use Illuminate\Console\Command;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -38,7 +39,7 @@ use Illuminate\Support\Facades\Log;
  * php artisan migrate:encryption
  * </code>
  */
-class MigrateEncryptionCommand extends Command
+class MigrateEncryptionCommand extends \Illuminate\Console\Command
 {
     /**
      * The name and signature of the console command.
@@ -52,7 +53,7 @@ class MigrateEncryptionCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Re-encrypt data using wrong encryption keys.';
+    protected $description = 'Rotate keys used for database encryption';
 
     /**
      * An array of old keys.  Each one is to be tried in turn.
@@ -82,7 +83,7 @@ class MigrateEncryptionCommand extends Command
      */
     protected function getEncryptionPrefix(): string
     {
-        return EncryptionServiceProvider::getPrefix();
+        return EncryptionServiceProvider::getEncryptionPrefix();
     }
 
     /**
@@ -103,7 +104,7 @@ class MigrateEncryptionCommand extends Command
      * @param string    $value
      * @param Encrypter $cipher
      *
-     * @return string
+     * @return null|string
      */
     public function encryptedAttribute($value, $cipher): ?string
     {
@@ -116,7 +117,7 @@ class MigrateEncryptionCommand extends Command
      * @param string    $value
      * @param Encrypter $cipher
      *
-     * @return string
+     * @return null|string
      */
     public function decryptedAttribute($value, $cipher): ?string
     {
