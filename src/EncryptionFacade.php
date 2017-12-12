@@ -23,9 +23,19 @@ class EncryptionFacade extends \Illuminate\Support\Facades\Facade
      *
      * @return string
      */
-    protected static function getFacadeAccessor()
+    public static function getFacadeAccessor()
     {
         return 'DatabaseEncryption';
+    }
+
+    /**
+     * Get the singleton of EncryptionHelper.
+     *
+     * @return EncryptionHelper
+     */
+    public static function getInstance()
+    {
+        return app(EncryptionFacade::getFacadeAccessor());
     }
 
     /**

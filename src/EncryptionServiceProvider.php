@@ -9,7 +9,9 @@ declare(strict_types = 1);
 
 namespace AustinHeap\Database\Encryption;
 
-use Config, DatabaseEncryption, Exception;
+use Config;
+
+//use DatabaseEncryption;
 
 /**
  * EncryptionServiceProvider.
@@ -43,11 +45,11 @@ class EncryptionServiceProvider extends \Illuminate\Support\ServiceProvider
                          ]);
 
         if (!defined('LARAVEL_DATABASE_ENCRYPTION_VERSION')) {
-            define('LARAVEL_DATABASE_ENCRYPTION_VERSION', EncryptionServiceProvider::VERSION);
+            define('LARAVEL_DATABASE_ENCRYPTION_VERSION', EncryptionHelper::VERSION);
         }
 
-        if (!function_exists('dbencrypt') || !function_exists('dbdecrypt')) {
-            throw new Exception('laravel-security-txt v' . self::getVersion() . ' helpers never loaded.');
+        foreach (['dbencrypt', 'dbdecrypt'] as $function) {
+            throw_if(!function_exists($function), 'The provider did not boot helper function: "' . $function . '".');
         }
     }
 
@@ -62,7 +64,7 @@ class EncryptionServiceProvider extends \Illuminate\Support\ServiceProvider
             __DIR__ . '/../config/database-encryption.php', 'database-encryption'
         );
 
-        $this->app->singleton(EncryptionFacade::getFacadeRoot(), function ($app) {
+        $this->app->singleton(EncryptionFacade::getFacadeAccessor(), function ($app) {
             return new EncryptionHelper();
         });
 
@@ -76,7 +78,7 @@ class EncryptionServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function getVersion(): string
     {
-        return DatabaseEncryption::getVersion();
+        return ''; //DatabaseEncryption::getVersion();
     }
 
     /**
@@ -84,53 +86,28 @@ class EncryptionServiceProvider extends \Illuminate\Support\ServiceProvider
      *
      * @return string
      */
-    public static function getVersionForPrefix(): string
+    public function getVersionForPrefix(): string
     {
-        $parts = self::getVersionParts(2);
-
-        return 'V-' . implode('-', array_map(function ($part) {
-                $part = (string)$part;
-
-                return strlen($part) == 2 ? $part : '0' . $part;
-            }, $parts));
+        return ''; //DatabaseEncryption::getVersionForPrefix();
     }
 
     /**
-     * Get the encryption prefix setting from configuration.
+     * Get the prefix.
      *
      * @return string
      */
-    public static function getEncryptionPrefix(): string
+    public function getPrefix(): string
     {
-        if (is_null(self::$prefixCache)) {
-            $prefix = Config::get('encryption.prefix', null);
-            $prefix = !empty($prefix) && is_string($prefix) ? $prefix : '__ENCRYPTED-%VERSION%__:';
-
-            self::$prefixCache = self::getEncryptionVersioning() ?
-                str_replace('%VERSION%', self::getVersionForPrefix(), $prefix) :
-                $prefix;
-        }
-
-        return self::$prefixCache;
+        return ''; //DatabaseEncryption::getVersionForPrefix();
     }
 
     /**
-     * Get the encryption control characters.
+     * Get the control characters.
      *
      * @return array
      */
-    public static function getControlCharacters(?string $type = null): array
+    public function getControlCharacters(?string $type = null): array
     {
-        $controls = self::getDefaultControlCharacters();
-
-        if (!is_null($type)) {
-            if (array_key_exists($type, $controls)) {
-                return $controls[$type];
-            } else {
-                throw new Exception('Control characters do not exist for $type: "' . (empty($type) ? '(empty)' : $type) . '".');
-            }
-        }
-
-        return $controls;
+        return []; //DatabaseEncryption::getControlCharacters();
     }
 }

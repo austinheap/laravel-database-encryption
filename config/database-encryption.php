@@ -15,7 +15,7 @@ return [
      *
      * @var null|bool
      */
-    'enable'             => env('DATABASE_ENCRYPTION_ENABLE', false),
+    'enabled'            => env('DB_ENCRYPTION_ENABLED', false),
 
     /**
      * Prefix used in attribute header.
@@ -24,7 +24,7 @@ return [
      *
      * @var null|string
      */
-    'prefix'             => env('DATABASE_ENCRYPTION_PREFIX', '__ENCRYPTED-%VERSION%__:'),
+    'prefix'             => env('DB_ENCRYPTION_PREFIX', '__ENCRYPTED-%VERSION%__:'),
 
     /**
      * Enable header versioning.
@@ -33,7 +33,7 @@ return [
      *
      * @var null|bool
      */
-    'versioning'         => env('DATABASE_ENCRYPTION_VERSIONING', true),
+    'versioning'         => env('DB_ENCRYPTION_VERSIONING', true),
 
     /**
      * Control characters used in header payload.
