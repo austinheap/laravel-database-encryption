@@ -152,7 +152,7 @@ Acknowledgement: http://some.url/acks
 
 ## Credits
 
-This is a fork of [InfusionWeb/laravel-robots-route](https://github.com/InfusionWeb/laravel-robots-route),
+This is a fork of [delatbabel/elocryptfive](https://github.com/delatbabel/elocryptfive),
 which was a fork of [ellisthedev/laravel-5-robots](https://github.com/ellisthedev/laravel-5-robots),
 which was a fork of [jayhealey/Robots](https://github.com/jayhealey/Robots),
 which was based on earlier work.
