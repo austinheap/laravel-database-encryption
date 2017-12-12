@@ -5,13 +5,16 @@
  * @author      Austin Heap <me@austinheap.com>
  * @version     v0.0.1
  */
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace AustinHeap\Database\Encryption\Traits;
 
-use Config, Crypt, Log;
+use AustinHeap\Database\Encryption\EncryptionFacade;
+use Config;
+use Crypt;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Encryption\EncryptException;
+use Log;
 
 /**
  * HasEncryptedAttributes.
@@ -68,10 +71,6 @@ use Illuminate\Contracts\Encryption\EncryptException;
  */
 trait HasEncryptedAttributes
 {
-    //
-    // Methods below here are native to the trait.
-    //
-
     /**
      * Get the configuration setting for the prefix used to determine if a string is encrypted.
      *
@@ -79,7 +78,7 @@ trait HasEncryptedAttributes
      */
     protected function getEncryptionPrefix(): string
     {
-        return \AustinHeap\Database\Encryption\EncryptionServiceProvider::getEncryptionPrefix();
+        return EncryptionFacade::getInstance()->getHeaderPrefix();
     }
 
     /**
@@ -91,7 +90,7 @@ trait HasEncryptedAttributes
      */
     protected function shouldEncrypt($key): bool
     {
-        $encrypt = isset($this->encrypted) ? $this->encrypted : $this->encryptable;
+        $encrypt = isset($this->encrypted) ? $this->encrypted : [];
 
         return in_array($key, $encrypt);
     }
@@ -120,7 +119,7 @@ trait HasEncryptedAttributes
      */
     public function encryptedAttribute($value): ?string
     {
-        return $this->getEncryptionPrefix() . Crypt::encrypt($value);
+        return EncryptionFacade::getInstance()->buildHeader($value) . Crypt::encrypt($value);
     }
 
     /**
@@ -135,7 +134,10 @@ trait HasEncryptedAttributes
      */
     public function decryptedAttribute($value): ?string
     {
-        return Crypt::decrypt(str_replace($this->getEncryptionPrefix(), '', $value));
+        $characters = EncryptionFacade::getInstance()->getControlCharacters('header');
+        $value      = substr($value, strpos($value, $characters['stop']['string']));
+
+        return Crypt::decrypt($value);
     }
 
     /**
@@ -151,7 +153,7 @@ trait HasEncryptedAttributes
             try {
                 $this->attributes[$key] = $this->encryptedAttribute($this->attributes[$key]);
             } catch (EncryptException $exception) {
-                Log::debug('Ignored exception in ' . __CLASS__ . ':' . __FUNCTION__ . ': ' . $exception->getMessage());
+                Log::debug('Ignored exception "' . EncryptException::class . '": ' . $exception->getMessage());
             }
         }
     }
@@ -246,6 +248,7 @@ trait HasEncryptedAttributes
 
     /**
      * Decrypt encrypted data before it is processed by cast attribute
+     *
      * @param $key
      * @param $value
      *
