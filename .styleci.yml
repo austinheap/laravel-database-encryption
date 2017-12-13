@@ -1,0 +1,9 @@
+preset: laravel
+
+risky: false
+
+finder:
+  exclude:
+    - "build"
+    - "docs"
+    - "tests"
