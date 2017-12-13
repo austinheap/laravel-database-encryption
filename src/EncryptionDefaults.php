@@ -5,7 +5,7 @@
  * @author      Austin Heap <me@austinheap.com>
  * @version     v0.1.0
  */
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AustinHeap\Database\Encryption;
 
@@ -106,7 +106,7 @@ abstract class EncryptionDefaults
      */
     public static function isDisabledDefault(): bool
     {
-        return !static::isEnabledDefault();
+        return ! static::isEnabledDefault();
     }
 
     /**
@@ -122,7 +122,7 @@ abstract class EncryptionDefaults
      */
     public static function isVersionlessDefault(): bool
     {
-        return !static::isVersioningDefault();
+        return ! static::isVersioningDefault();
     }
 
     /**
@@ -154,9 +154,9 @@ abstract class EncryptionDefaults
             self::$defaultControlCharactersCache = $characters;
         }
 
-        if (!is_null($type)) {
-            throw_if(!array_key_exists($type, self::$defaultControlCharactersCache), RuntimeException::class,
-                     'Default control characters do not exist for $type: "' . (empty($type) ? '(empty)' : $type) . '".');
+        if (! is_null($type)) {
+            throw_if(! array_key_exists($type, self::$defaultControlCharactersCache), RuntimeException::class,
+                     'Default control characters do not exist for $type: "'.(empty($type) ? '(empty)' : $type).'".');
 
             return self::$defaultControlCharactersCache[$type];
         }
@@ -179,8 +179,8 @@ abstract class EncryptionDefaults
      */
     public static function buildCharacter($character, bool $default = false): array
     {
-        throw_if(!is_int($character) && !is_string($character), RuntimeException::class,
-                 'Cannot build character array from $character type: "' . gettype($character) . '".');
+        throw_if(! is_int($character) && ! is_string($character), RuntimeException::class,
+                 'Cannot build character array from $character type: "'.gettype($character).'".');
 
         return [
             'int'     => is_int($character) ? $character : ord($character),
@@ -188,5 +188,4 @@ abstract class EncryptionDefaults
             'default' => $default,
         ];
     }
-
 }

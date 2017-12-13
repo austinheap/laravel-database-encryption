@@ -9,12 +9,12 @@ declare(strict_types=1);
 
 namespace AustinHeap\Database\Encryption\Console\Commands;
 
+use RuntimeException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Config;
 use AustinHeap\Database\Encryption\EncryptionServiceProvider;
-use RuntimeException;
 
 /**
  * Class MigrateEncryptionCommand.

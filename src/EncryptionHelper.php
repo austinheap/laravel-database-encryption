@@ -5,7 +5,7 @@
  * @author      Austin Heap <me@austinheap.com>
  * @version     v0.1.0
  */
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AustinHeap\Database\Encryption;
 
@@ -102,7 +102,7 @@ class EncryptionHelper extends EncryptionDefaults
      */
     public function getVersion(): string
     {
-        throw_if(!defined('LARAVEL_DATABASE_ENCRYPTION_VERSION'), RuntimeException::class,
+        throw_if(! defined('LARAVEL_DATABASE_ENCRYPTION_VERSION'), RuntimeException::class,
                  'The provider did not boot.');
 
         return LARAVEL_DATABASE_ENCRYPTION_VERSION;
@@ -128,8 +128,8 @@ class EncryptionHelper extends EncryptionDefaults
     public function isEnabled(): bool
     {
         if (is_null($this->enabledCache)) {
-            $enabled            = Config('database-encryption.enabled', null);
-            $this->enabledCache = !is_null($enabled) && is_bool($enabled) ? $enabled : self::isEnabledDefault();
+            $enabled = Config('database-encryption.enabled', null);
+            $this->enabledCache = ! is_null($enabled) && is_bool($enabled) ? $enabled : self::isEnabledDefault();
         }
 
         return $this->enabledCache;
@@ -142,7 +142,7 @@ class EncryptionHelper extends EncryptionDefaults
      */
     public function setDisabled(?bool $value = null): self
     {
-        return $this->setEnabled(is_bool($value) ? !$value : null);
+        return $this->setEnabled(is_bool($value) ? ! $value : null);
     }
 
     /**
@@ -152,7 +152,7 @@ class EncryptionHelper extends EncryptionDefaults
      */
     public function isDisabled(): bool
     {
-        return !$this->isEnabled();
+        return ! $this->isEnabled();
     }
 
     /**
@@ -176,8 +176,8 @@ class EncryptionHelper extends EncryptionDefaults
     public function isVersioning(): bool
     {
         if (is_null($this->versioningCache)) {
-            $versioning            = Config('database-encryption.versioning', null);
-            $this->versioningCache = !is_null($versioning) && is_bool($versioning) ? $versioning : self::isVersioningDefault();
+            $versioning = Config('database-encryption.versioning', null);
+            $this->versioningCache = ! is_null($versioning) && is_bool($versioning) ? $versioning : self::isVersioningDefault();
         }
 
         return $this->versioningCache;
@@ -190,7 +190,7 @@ class EncryptionHelper extends EncryptionDefaults
      */
     public function setVersionless(?bool $value = null): self
     {
-        return $this->setVersioning(is_bool($value) ? !$value : null);
+        return $this->setVersioning(is_bool($value) ? ! $value : null);
     }
 
     /**
@@ -200,7 +200,7 @@ class EncryptionHelper extends EncryptionDefaults
      */
     public function isVersionless(): bool
     {
-        return !$this->isVersioning();
+        return ! $this->isVersioning();
     }
 
     /**
@@ -210,26 +210,26 @@ class EncryptionHelper extends EncryptionDefaults
      */
     public function getVersionParts(?int $padding = null): array
     {
-        if (!is_array($this->versionPartsCache)) {
+        if (! is_array($this->versionPartsCache)) {
             $this->versionPartsCache = [];
         }
 
         $padding = is_int($padding) && $padding === 0 ? null : $padding;
-        $key = 'padding-' . (is_null($padding) ? 'null' : (string)$padding);
+        $key = 'padding-'.(is_null($padding) ? 'null' : (string) $padding);
 
-        if (!array_key_exists($key, $this->versionPartsCache)) {
+        if (! array_key_exists($key, $this->versionPartsCache)) {
             $parts = explode('.', $this->getVersion());
 
             $this->versionPartsCache[$key] = array_map(function ($part) use ($padding) {
-                $part = (string)$part;
+                $part = (string) $part;
 
                 if (is_null($padding)) {
                     return $part;
                 }
 
-                $length = strlen(is_string($part) ? $part : (string)$part);
+                $length = strlen(is_string($part) ? $part : (string) $part);
 
-                return $length == $padding ? $part : str_repeat('0', $padding - $length) . $part;
+                return $length == $padding ? $part : str_repeat('0', $padding - $length).$part;
             }, $parts);
         }
 
@@ -243,7 +243,7 @@ class EncryptionHelper extends EncryptionDefaults
      */
     public function getVersionForPrefix(int $padding = 2, string $glue = '-'): string
     {
-        return 'VERSION-' . implode($glue, $this->getVersionParts($padding));
+        return 'VERSION-'.implode($glue, $this->getVersionParts($padding));
     }
 
     /**
@@ -271,9 +271,9 @@ class EncryptionHelper extends EncryptionDefaults
         if (is_null($this->headerPrefixCache)) {
             $characters = $this->getControlCharacters();
 
-            $this->headerPrefixCache = $characters['header']['start']['string'] .
-                                       $characters['prefix']['start']['string'] .
-                                       $this->getPrefix() .
+            $this->headerPrefixCache = $characters['header']['start']['string'].
+                                       $characters['prefix']['start']['string'].
+                                       $this->getPrefix().
                                        $characters['prefix']['stop']['string'];
         }
 
@@ -289,22 +289,22 @@ class EncryptionHelper extends EncryptionDefaults
     {
         $characters = $this->getControlCharacters();
 
-        return $characters['header']['start']['string'] .
-               $characters['prefix']['start']['string'] .
-               $this->getPrefix() .
-               $characters['prefix']['stop']['string'] .
-               $characters['field']['start']['string'] .
-               'version' .
-               $characters['field']['delimiter']['string'] .
-               self::getVersionForPrefix() .
-               $characters['field']['stop']['string'] .
+        return $characters['header']['start']['string'].
+               $characters['prefix']['start']['string'].
+               $this->getPrefix().
+               $characters['prefix']['stop']['string'].
+               $characters['field']['start']['string'].
+               'version'.
+               $characters['field']['delimiter']['string'].
+               self::getVersionForPrefix().
+               $characters['field']['stop']['string'].
                (is_null($object) ? '' :
-                   $characters['field']['start']['string'] .
-                   'type' .
-                   $characters['field']['delimiter']['string'] .
-                   gettype($object) . '[' . (is_object($object) ? get_class($object) : 'native') . ']' .
+                   $characters['field']['start']['string'].
+                   'type'.
+                   $characters['field']['delimiter']['string'].
+                   gettype($object).'['.(is_object($object) ? get_class($object) : 'native').']'.
                    $characters['field']['stop']['string']
-               ) .
+               ).
                $characters['header']['stop']['string'];
     }
 
@@ -334,7 +334,7 @@ class EncryptionHelper extends EncryptionDefaults
     {
         if (is_null($this->prefixCache)) {
             $prefix = Config::get('database-encryption.prefix', null);
-            $prefix = !empty($prefix) && is_string($prefix) ? $prefix : self::getPrefixDefault();
+            $prefix = ! empty($prefix) && is_string($prefix) ? $prefix : self::getPrefixDefault();
 
             $this->prefixCache = $this->isVersioning() ?
                 str_replace('%VERSION%', $this->getVersionForPrefix(), $prefix) :
@@ -351,12 +351,12 @@ class EncryptionHelper extends EncryptionDefaults
      */
     public function getControlCharacters(?string $type = null): array
     {
-        $defaults   = self::getControlCharactersDefault();
+        $defaults = self::getControlCharactersDefault();
         $characters = self::getControlCharactersDefault();
 
-        if (!is_null($type)) {
-            throw_if(!array_key_exists($type, $characters),
-                     'Control characters do not exist for $type: "' . (empty($type) ? '(empty)' : $type) . '".');
+        if (! is_null($type)) {
+            throw_if(! array_key_exists($type, $characters),
+                     'Control characters do not exist for $type: "'.(empty($type) ? '(empty)' : $type).'".');
 
             return $characters[$type];
         }
