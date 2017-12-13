@@ -1,0 +1,38 @@
+build:
+    dependencies:
+        before:
+            - 'pecl install uopz'
+    tests:
+        override:
+            - php-scrutinizer-run
+            -
+                command: phpcs-run
+                use_website_config: true
+            -
+                command: 'vendor/bin/phpunit --coverage-clover build/logs/clover.xml'
+                coverage:
+                    file: 'build/logs/clover.xml'
+                    format: 'clover'
+    environment:
+        php:
+            version: 7.1, 7.2
+tools:
+    php_loc:
+        enabled: true
+        command: phploc
+        excluded_dirs:
+            - vendor
+            - tests
+            - build
+            - docs
+    sensiolabs_security_checker: true
+filter:
+    excluded_paths:
+        - 'vendor/*'
+        - 'tests/*'
+        - 'build/*'
+        - 'docs/*'
+checks:
+    php: true
+coding_style:
+    php: {  }

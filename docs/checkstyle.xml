@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<checkstyle version="1.3.0">
+  <file name="EncryptionFacade.php"/>
+  <file name="helpers.php">
+    <error line="0" severity="error" message="No summary was found for this file" source="phpDocumentor.file.PPC:ERR-50000"/>
+  </file>
+  <file name="EncryptionDefaults.php">
+    <error line="0" severity="error" message="No summary was found for this file" source="phpDocumentor.file.PPC:ERR-50000"/>
+  </file>
+  <file name="EncryptionHelper.php">
+    <error line="0" severity="error" message="No summary was found for this file" source="phpDocumentor.file.PPC:ERR-50000"/>
+  </file>
+  <file name="Console/Commands/MigrateEncryptionCommand.php">
+    <error line="0" severity="error" message="No summary was found for this file" source="phpDocumentor.file.PPC:ERR-50000"/>
+  </file>
+  <file name="Traits/HasEncryptedAttributes.php">
+    <error line="0" severity="error" message="No summary was found for this file" source="phpDocumentor.file.PPC:ERR-50000"/>
+  </file>
+  <file name="EncryptionServiceProvider.php"/>
+</checkstyle>
