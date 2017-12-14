@@ -5,16 +5,17 @@
  * @author      Austin Heap <me@austinheap.com>
  * @version     v0.1.0
  */
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace AustinHeap\Database\Encryption\Console\Commands;
 
-use RuntimeException;
 use DatabaseEncryption;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Exception;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use RuntimeException;
 
 /**
  * Class MigrateEncryptionCommand.
@@ -43,6 +44,13 @@ use Illuminate\Support\Facades\Config;
 class MigrateEncryptionCommand extends \Illuminate\Console\Command
 {
     /**
+     * The stats of the last run of the console command.
+     *
+     * @var array
+     */
+    private static $stats = null;
+
+    /**
      * The name and signature of the console command.
      *
      * @var string
@@ -61,21 +69,21 @@ class MigrateEncryptionCommand extends \Illuminate\Console\Command
      *
      * @var array
      */
-    protected $old_keys = [];
+    protected $old_keys = null;
 
     /**
      * The new encryption key.
      *
      * @var string
      */
-    protected $new_key = '';
+    protected $new_key = null;
 
     /**
      * The list of tables to be scanned.
      *
      * @var array
      */
-    protected $tables = [];
+    protected $tables = null;
 
     /**
      * Get the configuration setting for the prefix used to determine if a string is encrypted.
@@ -96,7 +104,7 @@ class MigrateEncryptionCommand extends \Illuminate\Console\Command
      */
     protected function isEncrypted($value): bool
     {
-        return strpos((string) $value, $this->getEncryptionPrefix()) === 0;
+        return strpos((string)$value, $this->getEncryptionPrefix()) === 0;
     }
 
     /**
@@ -109,7 +117,7 @@ class MigrateEncryptionCommand extends \Illuminate\Console\Command
      */
     public function encryptedAttribute($value, $cipher): ?string
     {
-        return $this->getEncryptionPrefix().$cipher->encrypt($value);
+        return $this->getEncryptionPrefix() . $cipher->encrypt($value);
     }
 
     /**
@@ -146,95 +154,129 @@ class MigrateEncryptionCommand extends \Illuminate\Console\Command
      */
     public function handle()
     {
-        // Set up the keys
+        // Set up keys
         $this->setupKeys();
 
-        // Check that the keys have been set up
-        throw_if(empty($this->old_keys) || count($this->old_keys) == 0, RuntimeException::class,
+        throw_if(!is_array($this->old_keys) || empty($this->old_keys) || count($this->old_keys) == 0,
+                 RuntimeException::class,
                  'You must override this class with (array)$old_keys set correctly.');
-        throw_if(empty($this->new_key) || ! is_string($this->new_key), RuntimeException::class,
+        throw_if(!is_string($this->new_key) || empty($this->new_key), RuntimeException::class,
                  'You must override this class with (string)$new_key set correctly.');
-        throw_if(empty($this->tables) || count($this->tables) == 0, RuntimeException::class,
+        throw_if(!is_array($this->tables) || empty($this->tables) || count($this->tables) == 0, RuntimeException::class,
                  'You must override this class with (array)$tables set correctly.');
 
-        // Make some encrypter objects
-        $cipher = Config::get('app.cipher');
-        $baseEncrypter = new Encrypter($this->new_key, $cipher);
-        $oldEncrypter = [];
+        // Make Encrypter objects
+        $cipher         = Config::get('app.cipher', 'AES-256-CBC');
+        $base_encrypter = new Encrypter($this->new_key, $cipher);
+        $old_encrypter  = [];
 
         foreach ($this->old_keys as $key => $value) {
-            $oldEncrypter[$key] = new Encrypter($value, $cipher);
+            $old_encrypter[$key] = new Encrypter($value, $cipher);
         }
 
+        // Setup stats
+        $stats = [
+            'tables'     => count($this->tables),
+            'rows'       => 0,
+            'attributes' => 0,
+            'failed'     => 0,
+            'migrated'   => 0,
+            'skipped'    => 0,
+        ];
+
+        // Migrate keys
+        $this->writeln('<fg=green>Migrating <fg=blue>' . count($this->old_keys) . '</> old database encryption key(s) on <fg=blue>' . $stats['tables'] . '</> table(s).</>');
+
         foreach ($this->tables as $table_name) {
-            $this->comment('Fetching data from: '.$table_name);
+            // Process table
+            $this->writeln('<fg=yellow>Fetching data from: <fg=white>"</><fg=green>' . $table_name . '<fg=white>"</>.</>');
+
+            // Setup table stats
+            $table_stats = ['rows' => 0, 'attributes' => 0, 'failed' => 0, 'migrated' => 0, 'skipped' => 0];
 
             // Get count of records
             $count = DB::table($table_name)
                        ->count();
 
-            // Create a progress bar
-            $bar = $this->output->createProgressBar($count);
+            // Create progress bar
+            $bar = defined('LARAVEL_DATABASE_ENCRYPTION_TESTS') ? null : $this->output->createProgressBar($count);
 
-            $count = number_format($count, 0, '.', ',');
-            $this->comment('Found '.number_format($count, 0).' records in database; checking encryption keys.');
+            $this->writeln('<fg=yellow>Found <fg=blue>' . number_format($count, 0) . '</> record(s) in database; checking encryption keys.</>');
 
-            // Get a table object
-            $table_data = DB::table($table_name);
+            // Get table object
+            $table_data = DB::table($table_name)
+                            ->orderBy('id');
 
-            // Cycle through the table data 1000 records at a time
+            // Cycle through table data 1k records at a time
             $chunk = 1000;
-            $table_data->chunk($chunk, function ($data) use ($bar, $chunk, $baseEncrypter, $oldEncrypter, $table_name) {
+            $table_data->chunk($chunk, function ($data) use (
+                &$stats,
+                &$table_stats,
+                $bar,
+                $chunk,
+                $base_encrypter,
+                $old_encrypter,
+                $table_name
+            ) {
                 foreach ($data as $datum) {
-                    $datum_array = get_object_vars($datum);
-
                     // Check every column of the table for an encrypted value.  If the value is
                     // encrypted then try to decrypt it with the base encrypter.
-                    $adjust = [];
+                    $datum_array = get_object_vars($datum);
+                    $adjust      = [];
+
+                    $table_stats['rows'] += 1;
+
                     foreach ($datum_array as $key => $value) {
-                        if (! $this->isEncrypted($value)) {
+                        $table_stats['attributes'] += 1;
+
+                        if (!$this->isEncrypted($value)) {
+                            $table_stats['skipped'] += 1;
                             continue;
                         }
 
                         try {
-                            $test = $this->decryptedAttribute($value, $baseEncrypter);
+                            $test = $this->decryptedAttribute($value, $base_encrypter);
                             continue;
-                        } catch (\Exception $e) {
+                        } catch (Exception $e) {
 
                             // If the base encrypter fails then try to decrypt it with each
                             // other encrypter until one works or they all fail.
-
                             $new_value = '';
-                            foreach ($oldEncrypter as $cipher) {
+
+                            foreach ($old_encrypter as $cipher) {
                                 try {
                                     $test = $this->decryptedAttribute($value, $cipher);
 
                                     // If that did not throw an exception then we have a match
                                     // between the old encrypter and the encrypted value, so
                                     // adjust the new value.
-                                    $new_value = $this->encryptedAttribute($test, $baseEncrypter);
+                                    $new_value = $this->encryptedAttribute($test, $base_encrypter);
                                     continue;
                                 } catch (\Exception $e) {
                                     // Do nothing, keep trying.
                                 }
                             }
 
-                            // If we got a match then we will have something in $new_value
+                            // If we got a match then empty($new_value) != true
                             if (empty($new_value)) {
                                 Log::error(
-                                    __CLASS__.':'.__TRAIT__.':'.__FILE__.':'.__LINE__.':'.__FUNCTION__.':'.
-                                    'Unable to find encryption key for: '.$table_name->key.' #'.$datum->id
+                                    __CLASS__ . ':' . __TRAIT__ . ':' . __FILE__ . ':' . __LINE__ . ':' . __FUNCTION__ . ':' .
+                                    'Unable to find encryption key for: ' . $table_name->key . ' #' . $datum->id
                                 );
 
+                                $table_stats['failed'] += 1;
                                 continue;
                             }
 
                             // We got a match
-                            $adjust[$key] = $new_value;
+                            $adjust[$key]            = $new_value;
+                            $table_stats['migrated'] += 1;
                         }
+
+                        $table_stats['attributes'] += 1;
                     }
 
-                    // Now if we have anything in $adjust we can write that back to the database
+                    // If we have anything in $adjust, write that back to the database
                     if (count($adjust) == 0) {
                         continue;
                     }
@@ -244,15 +286,72 @@ class MigrateEncryptionCommand extends \Illuminate\Console\Command
                       ->update($adjust);
                 }
 
-                // Advance the stick along one.
-                $bar->advance($chunk);
+                // Advance progress bar
+                if (! defined('LARAVEL_DATABASE_ENCRYPTION_TESTS')) {
+                    $bar->advance($chunk);
+                }
             });
 
-            // After each table, finish the progress bar.
-            $bar->finish();
-            $this->comment('');
+            // Finish progress bar
+            if (! defined('LARAVEL_DATABASE_ENCRYPTION_TESTS')) {
+                $bar->finish();
+            }
+
+            // And display stats
+            foreach ($table_stats as $key => $value) {
+                $stats[$key] += $value;
+            }
+
+            $this->writeln('');
+            $this->writeln('<fg=blue>Database encryption migration for table <fg=white>"</><fg=green>' . $table_name . '</><fg=white>"</> complete: ' . self::buildStatsString($table_stats) . '.</>');
         }
 
-        $this->comment('All tables complete.');
+        $this->writeln('<fg=green>Database encryption migration for all <fg=blue>' . $stats['tables'] . '</> table(s) complete: ' . self::buildStatsString($stats) . '.</>');
+        self::setStats($stats);
+    }
+
+    private function writeln(string $line): void
+    {
+        $output = $this->getOutput();
+
+        if (!is_null($output)) {
+            $output->writeln($line);
+        }
+    }
+
+    private static function buildStatsString(array $stats, string $stat = null, bool $stylize = true): string
+    {
+        $string = '';
+
+        foreach ($stats as $key => $value) {
+            if (!is_null($stat) && $key != $stat) {
+                continue;
+            }
+
+            $string .= self::stylizeStatsString($key, 'fg=white', $stylize) .
+                       self::stylizeStatsString(' = ', 'fg=yellow', $stylize) .
+                       self::stylizeStatsString(is_int($value) ? number_format($value, 0) : $value, 'fg=magenta',
+                                                $stylize) . '; ';
+        }
+
+        return empty($string) ? '' : substr($string, 0, -2);
+    }
+
+    private static function stylizeStatsString(string $string, string $style, bool $stylize = true): string
+    {
+        return !$stylize ? $string : '<' . $style . '>' . $string . '</' . (strpos($style,
+                                                                                   '<fg') === 0 ? '' : $style) . '>';
+    }
+
+    private static function setStats(array $stats): void
+    {
+        self::$stats = $stats;
+    }
+
+    public static function getStats(): array
+    {
+        throw_if(is_null(self::$stats), RuntimeException::class, 'Stats do not exist; command has not been executed.');
+
+        return self::$stats;
     }
 }

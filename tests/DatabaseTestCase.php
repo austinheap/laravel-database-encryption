@@ -10,6 +10,7 @@
 
 namespace AustinHeap\Database\Encryption\Tests;
 
+use AustinHeap\Database\Encryption\Tests\Models\DatabaseModel;
 use DB, RuntimeException;
 
 /**
@@ -67,6 +68,12 @@ class DatabaseTestCase extends TestCase
         }
     }
 
+    public function resetDatabase(): void
+    {
+        $this->tearDownDatabase();
+        $this->setUpDatabase();
+    }
+
     public function tearDownDatabase(): void
     {
         if (is_null(self::$database)) {
@@ -92,7 +99,19 @@ class DatabaseTestCase extends TestCase
         unlink($file);
     }
 
-    protected function randomStrings()
+    protected function randomModels(int $count): array
+    {
+        $ids = [];
+
+        for ($x = 0; $x < $count; $x++) {
+            $model = DatabaseModel::create($this->randomStrings());
+            $ids[] = $model->id;
+        }
+
+        return $ids;
+    }
+
+    protected function randomStrings(): array
     {
         $this->last_random_strings = [
             'should_be_encrypted' => $this->newRandom('test-value-that-should-be-encrypted-%s'),

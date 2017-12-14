@@ -50,7 +50,8 @@
     "require-dev": {
         "codeclimate/php-test-reporter": "dev-master",
         "phpunit/phpunit": "~6.0",
-        "orchestra/testbench": "^3.5"
+        "orchestra/testbench": "^3.5",
+        "barryvdh/laravel-ide-helper": "^2.4"
     },
     "autoload": {
         "psr-4": {

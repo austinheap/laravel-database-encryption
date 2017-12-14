@@ -5,15 +5,15 @@
  * @author      Austin Heap <me@austinheap.com>
  * @version     v0.1.0
  */
-declare(strict_types=1);
+declare(strict_types = 1);
 
 namespace AustinHeap\Database\Encryption\Traits;
 
-use Log;
 use Crypt;
 use DatabaseEncryption;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Encryption\EncryptException;
+use Log;
 
 /**
  * HasEncryptedAttributes.
@@ -71,6 +71,40 @@ use Illuminate\Contracts\Encryption\EncryptException;
 trait HasEncryptedAttributes
 {
     /**
+     * Private copy of last Encryption exception to occur.
+     *
+     * @var null|EncryptException|DecryptException
+     */
+    private $lastEncryptionException = null;
+
+    /**
+     * Get the last encryption-related exception to occur, if any.
+     *
+     * @return null|EncryptException|DecryptException
+     */
+    public function getLastEncryptionException()
+    {
+        return $this->lastEncryptionException;
+    }
+
+    /**
+     * Set the last encryption-related exception to occur, if any.
+     *
+     * @param null|EncryptException|DecryptException $exception
+     * @param null|string                            $function
+     *
+     * @return self
+     */
+    protected function setLastEncryptionException($exception, ?string $function = null): self
+    {
+        Log::debug('Ignored exception "' . get_class($exception) . '" in function "' . (is_null($function) ? '(unknown)' : $function) . '": '.$exception->getMessage());
+
+        $this->lastEncryptionException = $exception;
+
+        return $this;
+    }
+
+    /**
      * Get the configuration setting for the prefix used to determine if a string is encrypted.
      *
      * @return string
@@ -103,7 +137,7 @@ trait HasEncryptedAttributes
      */
     protected function isEncrypted($value): bool
     {
-        return strpos((string) $value, $this->getEncryptionPrefix()) === 0;
+        return strpos((string)$value, $this->getEncryptionPrefix()) === 0;
     }
 
     /**
@@ -118,7 +152,7 @@ trait HasEncryptedAttributes
      */
     public function encryptedAttribute($value): ?string
     {
-        return DatabaseEncryption::buildHeader($value).Crypt::encrypt($value);
+        return DatabaseEncryption::buildHeader($value) . Crypt::encrypt($value);
     }
 
     /**
@@ -134,7 +168,7 @@ trait HasEncryptedAttributes
     public function decryptedAttribute($value): ?string
     {
         $characters = DatabaseEncryption::getControlCharacters('header');
-        $value = substr($value, strpos($value, $characters['stop']['string']));
+        $value      = substr($value, strpos($value, $characters['stop']['string']));
 
         return Crypt::decrypt($value);
     }
@@ -144,17 +178,19 @@ trait HasEncryptedAttributes
      *
      * @param string $key
      *
-     * @return void
+     * @return self
      */
-    protected function doEncryptAttribute($key): void
+    protected function doEncryptAttribute($key): self
     {
-        if ($this->shouldEncrypt($key) && ! $this->isEncrypted($this->attributes[$key])) {
+        if ($this->shouldEncrypt($key) && !$this->isEncrypted($this->attributes[$key])) {
             try {
                 $this->attributes[$key] = $this->encryptedAttribute($this->attributes[$key]);
             } catch (EncryptException $exception) {
-                Log::debug('Ignored '.__FUNCTION__.' exception "'.EncryptException::class.'": '.$exception->getMessage());
+                $this->setLastEncryptionException($exception, __FUNCTION__);
             }
         }
+
+        return $this;
     }
 
     /**
@@ -171,7 +207,7 @@ trait HasEncryptedAttributes
             try {
                 return $this->decryptedAttribute($value);
             } catch (DecryptException $exception) {
-                Log::debug('Ignored '.__FUNCTION__.' exception "'.EncryptException::class.'": '.$exception->getMessage());
+                $this->setLastEncryptionException($exception, __FUNCTION__);
             }
         }
 
@@ -222,7 +258,7 @@ trait HasEncryptedAttributes
         $dirty = [];
 
         foreach ($this->attributes as $key => $value) {
-            if (! $this->originalIsEquivalent($key, $value)) {
+            if (!$this->originalIsEquivalent($key, $value)) {
                 $dirty[$key] = $value;
             }
         }

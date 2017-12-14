@@ -11,14 +11,14 @@
 namespace AustinHeap\Database\Encryption\Tests\Console;
 
 use AustinHeap\Database\Encryption\Console\Commands\MigrateEncryptionCommand;
-use AustinHeap\Database\Encryption\Tests\TestCase;
+use AustinHeap\Database\Encryption\Tests\DatabaseTestCase;
 use DatabaseEncryption;
 use RuntimeException;
 
 /**
  * MigrateEncryptionTest
  */
-class MigrateEncryptionTest extends TestCase
+class MigrateEncryptionTest extends DatabaseTestCase
 {
     public function testNotExtended()
     {
@@ -74,6 +74,8 @@ class MigrateEncryptionTest extends TestCase
 
     public function testExtended()
     {
+        $this->resetDatabase();
+
         $command = new class() extends MigrateEncryptionCommand
         {
             protected function setupKeys()
@@ -87,5 +89,13 @@ class MigrateEncryptionTest extends TestCase
         $this->callProtectedMethod($command, 'setupKeys');
         $this->assertAttributeNotEmpty('new_key', $command);
         $this->assertAttributeEquals(['test_models'], 'tables', $command);
+
+        $ids = $this->randomModels(LARAVEL_DATABASE_ENCRYPTION_ITERATIONS);
+        $this->assertCount(LARAVEL_DATABASE_ENCRYPTION_ITERATIONS, $ids);
+
+        $command->handle();
+
+        $stats = $command::getStats();
+        $this->assertNotNull($stats);
     }
 }
