@@ -5,17 +5,17 @@
  * @author      Austin Heap <me@austinheap.com>
  * @version     v0.1.0
  */
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace AustinHeap\Database\Encryption\Console\Commands;
 
-use DatabaseEncryption;
 use Exception;
-use Illuminate\Encryption\Encrypter;
-use Illuminate\Support\Facades\Config;
+use RuntimeException;
+use DatabaseEncryption;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use RuntimeException;
+use Illuminate\Encryption\Encrypter;
+use Illuminate\Support\Facades\Config;
 
 /**
  * Class MigrateEncryptionCommand.
@@ -104,7 +104,7 @@ class MigrateEncryptionCommand extends \Illuminate\Console\Command
      */
     protected function isEncrypted($value): bool
     {
-        return strpos((string)$value, $this->getEncryptionPrefix()) === 0;
+        return strpos((string) $value, $this->getEncryptionPrefix()) === 0;
     }
 
     /**
@@ -117,7 +117,7 @@ class MigrateEncryptionCommand extends \Illuminate\Console\Command
      */
     public function encryptedAttribute($value, $cipher): ?string
     {
-        return $this->getEncryptionPrefix() . $cipher->encrypt($value);
+        return $this->getEncryptionPrefix().$cipher->encrypt($value);
     }
 
     /**
@@ -157,18 +157,18 @@ class MigrateEncryptionCommand extends \Illuminate\Console\Command
         // Set up keys
         $this->setupKeys();
 
-        throw_if(!is_array($this->old_keys) || empty($this->old_keys) || count($this->old_keys) == 0,
+        throw_if(! is_array($this->old_keys) || empty($this->old_keys) || count($this->old_keys) == 0,
                  RuntimeException::class,
                  'You must override this class with (array)$old_keys set correctly.');
-        throw_if(!is_string($this->new_key) || empty($this->new_key), RuntimeException::class,
+        throw_if(! is_string($this->new_key) || empty($this->new_key), RuntimeException::class,
                  'You must override this class with (string)$new_key set correctly.');
-        throw_if(!is_array($this->tables) || empty($this->tables) || count($this->tables) == 0, RuntimeException::class,
+        throw_if(! is_array($this->tables) || empty($this->tables) || count($this->tables) == 0, RuntimeException::class,
                  'You must override this class with (array)$tables set correctly.');
 
         // Make Encrypter objects
-        $cipher         = Config::get('app.cipher', 'AES-256-CBC');
+        $cipher = Config::get('app.cipher', 'AES-256-CBC');
         $base_encrypter = new Encrypter($this->new_key, $cipher);
-        $old_encrypter  = [];
+        $old_encrypter = [];
 
         foreach ($this->old_keys as $key => $value) {
             $old_encrypter[$key] = new Encrypter($value, $cipher);
@@ -185,11 +185,11 @@ class MigrateEncryptionCommand extends \Illuminate\Console\Command
         ];
 
         // Migrate keys
-        $this->writeln('<fg=green>Migrating <fg=blue>' . count($this->old_keys) . '</> old database encryption key(s) on <fg=blue>' . $stats['tables'] . '</> table(s).</>');
+        $this->writeln('<fg=green>Migrating <fg=blue>'.count($this->old_keys).'</> old database encryption key(s) on <fg=blue>'.$stats['tables'].'</> table(s).</>');
 
         foreach ($this->tables as $table_name) {
             // Process table
-            $this->writeln('<fg=yellow>Fetching data from: <fg=white>"</><fg=green>' . $table_name . '<fg=white>"</>.</>');
+            $this->writeln('<fg=yellow>Fetching data from: <fg=white>"</><fg=green>'.$table_name.'<fg=white>"</>.</>');
 
             // Setup table stats
             $table_stats = ['rows' => 0, 'attributes' => 0, 'failed' => 0, 'migrated' => 0, 'skipped' => 0];
@@ -201,7 +201,7 @@ class MigrateEncryptionCommand extends \Illuminate\Console\Command
             // Create progress bar
             $bar = defined('LARAVEL_DATABASE_ENCRYPTION_TESTS') ? null : $this->output->createProgressBar($count);
 
-            $this->writeln('<fg=yellow>Found <fg=blue>' . number_format($count, 0) . '</> record(s) in database; checking encryption keys.</>');
+            $this->writeln('<fg=yellow>Found <fg=blue>'.number_format($count, 0).'</> record(s) in database; checking encryption keys.</>');
 
             // Get table object
             $table_data = DB::table($table_name)
@@ -222,14 +222,14 @@ class MigrateEncryptionCommand extends \Illuminate\Console\Command
                     // Check every column of the table for an encrypted value.  If the value is
                     // encrypted then try to decrypt it with the base encrypter.
                     $datum_array = get_object_vars($datum);
-                    $adjust      = [];
+                    $adjust = [];
 
                     $table_stats['rows'] += 1;
 
                     foreach ($datum_array as $key => $value) {
                         $table_stats['attributes'] += 1;
 
-                        if (!$this->isEncrypted($value)) {
+                        if (! $this->isEncrypted($value)) {
                             $table_stats['skipped'] += 1;
                             continue;
                         }
@@ -260,8 +260,8 @@ class MigrateEncryptionCommand extends \Illuminate\Console\Command
                             // If we got a match then empty($new_value) != true
                             if (empty($new_value)) {
                                 Log::error(
-                                    __CLASS__ . ':' . __TRAIT__ . ':' . __FILE__ . ':' . __LINE__ . ':' . __FUNCTION__ . ':' .
-                                    'Unable to find encryption key for: ' . $table_name->key . ' #' . $datum->id
+                                    __CLASS__.':'.__TRAIT__.':'.__FILE__.':'.__LINE__.':'.__FUNCTION__.':'.
+                                    'Unable to find encryption key for: '.$table_name->key.' #'.$datum->id
                                 );
 
                                 $table_stats['failed'] += 1;
@@ -269,7 +269,7 @@ class MigrateEncryptionCommand extends \Illuminate\Console\Command
                             }
 
                             // We got a match
-                            $adjust[$key]            = $new_value;
+                            $adjust[$key] = $new_value;
                             $table_stats['migrated'] += 1;
                         }
 
@@ -303,10 +303,10 @@ class MigrateEncryptionCommand extends \Illuminate\Console\Command
             }
 
             $this->writeln('');
-            $this->writeln('<fg=blue>Database encryption migration for table <fg=white>"</><fg=green>' . $table_name . '</><fg=white>"</> complete: ' . self::buildStatsString($table_stats) . '.</>');
+            $this->writeln('<fg=blue>Database encryption migration for table <fg=white>"</><fg=green>'.$table_name.'</><fg=white>"</> complete: '.self::buildStatsString($table_stats).'.</>');
         }
 
-        $this->writeln('<fg=green>Database encryption migration for all <fg=blue>' . $stats['tables'] . '</> table(s) complete: ' . self::buildStatsString($stats) . '.</>');
+        $this->writeln('<fg=green>Database encryption migration for all <fg=blue>'.$stats['tables'].'</> table(s) complete: '.self::buildStatsString($stats).'.</>');
         self::setStats($stats);
     }
 
@@ -314,7 +314,7 @@ class MigrateEncryptionCommand extends \Illuminate\Console\Command
     {
         $output = $this->getOutput();
 
-        if (!is_null($output)) {
+        if (! is_null($output)) {
             $output->writeln($line);
         }
     }
@@ -324,14 +324,14 @@ class MigrateEncryptionCommand extends \Illuminate\Console\Command
         $string = '';
 
         foreach ($stats as $key => $value) {
-            if (!is_null($stat) && $key != $stat) {
+            if (! is_null($stat) && $key != $stat) {
                 continue;
             }
 
-            $string .= self::stylizeStatsString($key, 'fg=white', $stylize) .
-                       self::stylizeStatsString(' = ', 'fg=yellow', $stylize) .
+            $string .= self::stylizeStatsString($key, 'fg=white', $stylize).
+                       self::stylizeStatsString(' = ', 'fg=yellow', $stylize).
                        self::stylizeStatsString(is_int($value) ? number_format($value, 0) : $value, 'fg=magenta',
-                                                $stylize) . '; ';
+                                                $stylize).'; ';
         }
 
         return empty($string) ? '' : substr($string, 0, -2);
@@ -339,8 +339,8 @@ class MigrateEncryptionCommand extends \Illuminate\Console\Command
 
     private static function stylizeStatsString(string $string, string $style, bool $stylize = true): string
     {
-        return !$stylize ? $string : '<' . $style . '>' . $string . '</' . (strpos($style,
-                                                                                   '<fg') === 0 ? '' : $style) . '>';
+        return ! $stylize ? $string : '<'.$style.'>'.$string.'</'.(strpos($style,
+                                                                                   '<fg') === 0 ? '' : $style).'>';
     }
 
     private static function setStats(array $stats): void
