@@ -53,13 +53,15 @@ directory. The most logical place to start are the [docs for the `HasEncryptedAt
     + [Can I manually encrypt or decrypt arbitrary data?](#can-i-manually-encrypt-or-decrypt-arbitrary-data)
     + [Can I search encrypted data?](#can-i-search-encrypted-data)
     + [Can I encrypt all my `User` model data?](#can-i-encrypt-all-my-user-model-data)
+    + [Is this package compatible with elocryptfive out-of-the-box?](#is-this-package-compatible-with-elocryptfive-out-of-the-box)
+* [Implementations](#implementations)
 * [Credits](#credits)
 * [Contributing](#contributing)
 * [License](#license)
 
 ## Requirements
 
-* Laravel 5.5+
+* Laravel 5.5.*
 * PHP >= 7.1.0
 * PHP [OpenSSL extension](http://php.net/manual/en/book.openssl.php)
 
@@ -279,7 +281,7 @@ No! While it _is_ a (more modern) replacement, it is not compatible directly out
 
 A pull request for automated migrations is more than welcome but is currently out of the scope of this project's goals.
 
-## Notable Implementations
+## Implementations
 
 The following decently-trafficed sites use this package in production:
 
