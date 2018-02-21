@@ -265,12 +265,25 @@ the encrypted value as needed.
 
 No! The same issue with searching also applies to authentication because authentication requires search.
 
+### Is this package compatible with [elocryptfive](https://github.com/delatbabel/elocryptfive) out-of-the-box?
+
+No! While it _is_ a (more modern) replacement, it is not compatible directly out of the box. To migrate to this package from elocryptfive, you must:
+
+1. Decrypt all the data in your database encrypted by elocryptfive.
+2. Remove any calls to elocryptfive from your models/code.
+3. Remove elocryptfive from your `composer.json` and run `composer update`.
+4. At this point you should have no encrypted data in your database and all calls/references, but make sure elocryptfive is completely purged.
+5. Follow the installation instructions above.
+6. ???
+7. Profit!
+
+A pull request for automated migrations is more than welcome but is currently out of the scope of this project's goals.
 
 ## Notable Implementations
 
 The following decently-trafficed sites use this package in production:
 
-- [`security.txt` registry & whois - securitytext.org](https://securitytext.org/)
+- [securitytext.org - `security.txt` document registry and whois server](https://securitytext.org/)
 
 ## Credits
 
