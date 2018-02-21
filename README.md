@@ -265,6 +265,13 @@ the encrypted value as needed.
 
 No! The same issue with searching also applies to authentication because authentication requires search.
 
+
+## Notable Implementations
+
+The following decently-trafficed sites use this package in production:
+
+- [`security.txt` registry & whois - securitytext.org](https://securitytext.org/)
+
 ## Credits
 
 This is a fork of [delatbabel/elocryptfive](https://github.com/delatbabel/elocryptfive),
