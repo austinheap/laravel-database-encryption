@@ -75,6 +75,8 @@ If you are encrypting long strings such as JSON blobs then the encrypted values 
 be longer than a `VARCHAR` field can support, and you will need to alter your column
 types to `TEXT` or `LONGTEXT`.
 
+The FAQ contains [migration instructions if you are moving from elocryptfive](#is-this-package-compatible-with-elocryptfive-out-of-the-box).
+
 ## Installation
 
 ### Step 1: Composer
