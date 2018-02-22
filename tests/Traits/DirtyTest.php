@@ -40,4 +40,19 @@ class DirtyTest extends DatabaseTestCase
         $this->assertNotEquals($model->getOriginal('shouldnt_be_encrypted'), $new_model->getOriginal('shouldnt_be_encrypted'));
         $this->assertNotEquals($model->shouldnt_be_encrypted, $new_model->shouldnt_be_encrypted);
     }
+    
+    public function testDontEncryptUnchangedAttributes()
+    {
+        $string = 'Hello world!';
+        
+        $model = DatabaseModel::create(['should_be_encrypted' => $string]);
+        
+        $this->assertTrue($model->exists);
+        
+        $model->should_be_encrypted = $string;
+        
+        $changedAttributes = $model->getDirty();
+        
+        $this->assertTrue(empty($changedAttributes));
+    }
 }
