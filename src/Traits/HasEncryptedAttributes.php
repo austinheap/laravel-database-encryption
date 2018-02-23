@@ -265,7 +265,7 @@ trait HasEncryptedAttributes
 
         return $dirty;
     }
-    
+
     /**
      * Determine if the new and old values for a given key are equivalent.
      *
@@ -285,7 +285,7 @@ trait HasEncryptedAttributes
             $current = $this->decryptedAttribute($current);
             $original = $this->decryptedAttribute($this->getOriginal($key));
         }
-
+        
         if ($current === $original) {
             return true;
         } elseif (is_null($current)) {
@@ -297,7 +297,6 @@ trait HasEncryptedAttributes
             return $this->castAttribute($key, $current) ===
                    $this->castAttribute($key, $original);
         }
-
         return is_numeric($current) && is_numeric($original)
                 && strcmp((string) $current, (string) $original) === 0;
     }
