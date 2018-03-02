@@ -21,7 +21,6 @@ class DirtyTest extends DatabaseTestCase
     public function testCreate()
     {
         $model = DatabaseModel::create($this->randomStrings());
-
         $this->assertTrue(method_exists($model, 'getDirty'));
         $this->assertCount(0, $model->getDirty());
     }
@@ -51,8 +50,6 @@ class DirtyTest extends DatabaseTestCase
         
         $model->should_be_encrypted = $string;
         
-        $changedAttributes = $model->getDirty();
-        
-        $this->assertTrue(empty($changedAttributes));
+        $this->assertCount(0, $model->getDirty());
     }
 }
