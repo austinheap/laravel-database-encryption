@@ -12,9 +12,10 @@ namespace AustinHeap\Database\Encryption\Traits;
 use Log;
 use Crypt;
 use DatabaseEncryption;
+use Illuminate\Support\Arr;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Encryption\EncryptException;
-use Illuminate\Support\Arr;
+
 
 /**
  * HasEncryptedAttributes.
@@ -298,6 +299,7 @@ trait HasEncryptedAttributes
         if (array_key_exists($key, $this->getCasts())) {
             return $types ? in_array($this->getCastType($key), (array) $types, true) : true;
         }
+        
         return false;
     }
 
@@ -309,13 +311,12 @@ trait HasEncryptedAttributes
     public function getDirty()
     {
         $dirty = [];
-
-        foreach ($this->attributes as $key => $value) {
+        foreach ($this->getAttributes() as $key => $value) {
             if (! $this->originalIsEquivalent($key, $value)) {
                 $dirty[$key] = $value;
             }
         }
-
+        
         return $dirty;
     }
 
@@ -350,6 +351,7 @@ trait HasEncryptedAttributes
             return $this->castAttribute($key, $current) ===
                    $this->castAttribute($key, $original);
         }
+        
         return is_numeric($current) && is_numeric($original)
                 && strcmp((string) $current, (string) $original) === 0;
     }
