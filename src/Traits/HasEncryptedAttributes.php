@@ -249,7 +249,7 @@ trait HasEncryptedAttributes
     {
         return parent::castAttribute($key, $this->doDecryptAttribute($key, $value));
     }
-    
+
     /**
      * Get the model's original attribute values.
      *
@@ -261,7 +261,7 @@ trait HasEncryptedAttributes
     {
         return Arr::get($this->original, $key, $default);
     }
-    
+
     /**
      * Determine if the given attribute is a date or date castable.
      *
@@ -273,7 +273,7 @@ trait HasEncryptedAttributes
         return in_array($key, $this->getDates()) ||
                                     $this->isDateCastable($key);
     }
-    
+
     /**
      * Convert a DateTime to a storable string.
      *
@@ -286,7 +286,7 @@ trait HasEncryptedAttributes
             $this->getDateFormat()
         );
     }
-    
+
     /**
      * Determine whether an attribute should be cast to a native type.
      *
