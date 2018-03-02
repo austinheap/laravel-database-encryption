@@ -281,7 +281,7 @@ trait HasEncryptedAttributes
         
         $original = $this->getOriginal($key);
         
-        if (isset($this->encrypted) && is_array($this->encrypted) && in_array($key, $this->encrypted)) {
+        if ($this->shouldEncrypt($key)) {
             $current = $this->decryptedAttribute($current);
             $original = $this->decryptedAttribute($this->getOriginal($key));
         }
