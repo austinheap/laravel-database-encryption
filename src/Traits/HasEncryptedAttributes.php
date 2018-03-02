@@ -16,7 +16,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Encryption\EncryptException;
 
-
 /**
  * HasEncryptedAttributes.
  *
@@ -299,7 +298,7 @@ trait HasEncryptedAttributes
         if (array_key_exists($key, $this->getCasts())) {
             return $types ? in_array($this->getCastType($key), (array) $types, true) : true;
         }
-        
+
         return false;
     }
 
@@ -316,7 +315,7 @@ trait HasEncryptedAttributes
                 $dirty[$key] = $value;
             }
         }
-        
+
         return $dirty;
     }
 
@@ -332,14 +331,14 @@ trait HasEncryptedAttributes
         if (! array_key_exists($key, $this->original)) {
             return false;
         }
-        
+
         $original = $this->getOriginal($key);
-        
+
         if ($this->shouldEncrypt($key)) {
             $current = $this->decryptedAttribute($current);
             $original = $this->decryptedAttribute($this->getOriginal($key));
         }
-        
+
         if ($current === $original) {
             return true;
         } elseif (is_null($current)) {
@@ -351,7 +350,7 @@ trait HasEncryptedAttributes
             return $this->castAttribute($key, $current) ===
                    $this->castAttribute($key, $original);
         }
-        
+
         return is_numeric($current) && is_numeric($original)
                 && strcmp((string) $current, (string) $original) === 0;
     }
