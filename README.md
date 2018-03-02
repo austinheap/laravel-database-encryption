@@ -134,11 +134,11 @@ You may now enable automagic encryption and decryption of Eloquent models by edi
 
 ```php
 return [
-    'enabled' => env('DATABASE_ENCRYPTION_ENABLED', true),
+    'enabled' => env('DB_ENCRYPTION_ENABLED', true),
 ];
 ```
 
-Or simply setting the the `DATABASE_ENCRYPTION_ENABLED` environment variable to true, via
+Or simply setting the the `DB_ENCRYPTION_ENABLED` environment variable to true, via
 the Laravel `.env` file or hosting environment.
 
 ```bash
