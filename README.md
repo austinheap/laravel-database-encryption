@@ -142,7 +142,7 @@ Or simply setting the the `DB_ENCRYPTION_ENABLED` environment variable to true, 
 the Laravel `.env` file or hosting environment.
 
 ```bash
-DATABASE_ENCRYPTION_ENABLED=true
+DB_ENCRYPTION_ENABLED=true
 ```
 
 ## Usage
