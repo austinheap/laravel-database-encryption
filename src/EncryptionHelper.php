@@ -9,8 +9,8 @@ declare(strict_types=1);
 
 namespace AustinHeap\Database\Encryption;
 
-use Config;
 use RuntimeException;
+use Illuminate\Support\Facades\Config;
 
 /**
  * EncryptionHelper.
