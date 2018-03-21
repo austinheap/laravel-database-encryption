@@ -153,7 +153,7 @@ to and define a `protected $encrypted` array containing a list of the attributes
 For example:
 
 ```php
-    use AustinHeap\Database\Encryption;
+    use AustinHeap\Database\Encryption\Traits\HasEncryptedAttributes;
 
     class User extends Eloquent {
         use HasEncryptedAttributes;
@@ -175,7 +175,7 @@ converted to JSON and then encrypted.
 For example:
 
 ```php
-    use AustinHeap\Database\Encryption;
+    use AustinHeap\Database\Encryption\Traits\HasEncryptedAttributes;
 
     class User extends Eloquent {
         use HasEncryptedAttributes;
