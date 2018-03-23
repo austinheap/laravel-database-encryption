@@ -12,6 +12,7 @@ namespace AustinHeap\Database\Encryption\Traits;
 use Log;
 use Crypt;
 use DatabaseEncryption;
+use Illuminate\Support\Arr;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Encryption\EncryptException;
 
@@ -249,6 +250,59 @@ trait HasEncryptedAttributes
     }
 
     /**
+     * Get the model's original attribute values.
+     *
+     * @param  string|null  $key
+     * @param  mixed  $default
+     * @return mixed|array
+     */
+    public function getOriginal($key = null, $default = null)
+    {
+        return Arr::get($this->original, $key, $default);
+    }
+
+    /**
+     * Determine if the given attribute is a date or date castable.
+     *
+     * @param  string  $key
+     * @return bool
+     */
+    protected function isDateAttribute($key)
+    {
+        return in_array($key, $this->getDates()) ||
+                                    $this->isDateCastable($key);
+    }
+
+    /**
+     * Convert a DateTime to a storable string.
+     *
+     * @param  \DateTime|int  $value
+     * @return string
+     */
+    public function fromDateTime($value)
+    {
+        return empty($value) ? $value : $this->asDateTime($value)->format(
+            $this->getDateFormat()
+        );
+    }
+
+    /**
+     * Determine whether an attribute should be cast to a native type.
+     *
+     * @param  string  $key
+     * @param  array|string|null  $types
+     * @return bool
+     */
+    public function hasCast($key, $types = null)
+    {
+        if (array_key_exists($key, $this->getCasts())) {
+            return $types ? in_array($this->getCastType($key), (array) $types, true) : true;
+        }
+
+        return false;
+    }
+
+    /**
      * Get the attributes that have been changed since last sync.
      *
      * @return array
@@ -264,6 +318,42 @@ trait HasEncryptedAttributes
         }
 
         return $dirty;
+    }
+
+    /**
+     * Determine if the new and old values for a given key are equivalent.
+     *
+     * @param  string $key
+     * @param  mixed  $current
+     * @return bool
+     */
+    protected function originalIsEquivalent($key, $current)
+    {
+        if (! array_key_exists($key, $this->original)) {
+            return false;
+        }
+
+        $original = $this->getOriginal($key);
+
+        if ($this->shouldEncrypt($key)) {
+            $current = $this->decryptedAttribute($current);
+            $original = $this->decryptedAttribute($this->getOriginal($key));
+        }
+
+        if ($current === $original) {
+            return true;
+        } elseif (is_null($current)) {
+            return false;
+        } elseif ($this->isDateAttribute($key)) {
+            return $this->fromDateTime($current) ===
+                   $this->fromDateTime($original);
+        } elseif ($this->hasCast($key)) {
+            return $this->castAttribute($key, $current) ===
+                   $this->castAttribute($key, $original);
+        }
+
+        return is_numeric($current) && is_numeric($original)
+                && strcmp((string) $current, (string) $original) === 0;
     }
 
     /**
