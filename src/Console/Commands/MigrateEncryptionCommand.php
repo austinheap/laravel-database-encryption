@@ -11,11 +11,11 @@ namespace AustinHeap\Database\Encryption\Console\Commands;
 
 use Exception;
 use RuntimeException;
-use DatabaseEncryption;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Config;
+use AustinHeap\Database\Encryption\EncryptionFacade as DatabaseEncryption;
 
 /**
  * Class MigrateEncryptionCommand.
