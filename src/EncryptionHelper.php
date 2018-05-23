@@ -3,7 +3,7 @@
  * src/EncryptionHelper.php.
  *
  * @author      Austin Heap <me@austinheap.com>
- * @version     v0.1.0
+ * @version     v0.1.2
  */
 declare(strict_types=1);
 
@@ -26,7 +26,7 @@ class EncryptionHelper extends EncryptionDefaults
      *
      * @var string
      */
-    public const VERSION = '0.1.0';
+    public const VERSION = '0.1.2';
 
     /**
      * Private enable flag cache.

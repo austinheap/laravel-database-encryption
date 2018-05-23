@@ -4,7 +4,7 @@
  * @package     laravel-database-encryption
  * @link        https://github.com/austinheap/laravel-database-encryption
  * @author      Austin Heap <me@austinheap.com>
- * @version     v0.1.0
+ * @version     v0.1.2
  */
 
 namespace AustinHeap\Database\Encryption\Tests\Helper;
@@ -51,7 +51,7 @@ class PrefixTest extends TestCase
         $this->newRandom('__LARAVEL-DATABASE-ENCRYPTION-TEST-PREFIX-%s-%%VERSION%%__');
         $helper = (new EncryptionHelper())->setPrefix($this->currentRandom());
 
-        $this->assertEquals(str_replace('%VERSION%', 'VERSION-00-01-00', $this->currentRandom()), $helper->getPrefix());
+        $this->assertEquals(str_replace('%VERSION%', 'VERSION-00-01-02', $this->currentRandom()), $helper->getPrefix());
     }
 
     public function testPrefixVersionless()
