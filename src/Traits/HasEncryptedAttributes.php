@@ -173,6 +173,9 @@ trait HasEncryptedAttributes
         throw_if(! array_key_exists('stop', $characters), DecryptException::class, 'Cannot decrypt model attribute not originally encrypted by this package!');
 
         $offset = strpos($value, $characters['stop']['string']);
+
+        throw_if($offset === false, DecryptException::class, "Cannot decrypt model attribute with no package header!");
+
         $value = substr($value, $offset);
 
         return Crypt::decrypt($value);
