@@ -48,34 +48,34 @@
 Warning: count(): Parameter must be an array or an object that implements Countable in phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Extension/Core.php on line 1293
 
 Call Stack:
-    0.0010     392632   1. {main}() /usr/local/bin/phpdoc:0
-    0.0578    2220712   2. require('phar:///usr/local/bin/phpdoc/bin/phpdoc') /usr/local/bin/phpdoc:10
-    0.1515   10933200   3. phpDocumentor\Application->run() phar:///usr/local/bin/phpdoc/bin/phpdoc:23
-    0.1532   11660432   4. Cilex\Provider\Console\ContainerAwareApplication->run() phar:///usr/local/bin/phpdoc/src/phpDocumentor/Application.php:183
-    0.1533   11660432   5. Cilex\Provider\Console\ContainerAwareApplication->doRun() phar:///usr/local/bin/phpdoc/vendor/symfony/console/Symfony/Component/Console/Application.php:126
-    0.1534   11660432   6. Cilex\Provider\Console\ContainerAwareApplication->doRunCommand() phar:///usr/local/bin/phpdoc/vendor/symfony/console/Symfony/Component/Console/Application.php:195
-    0.1534   11660432   7. phpDocumentor\Command\Project\RunCommand->run() phar:///usr/local/bin/phpdoc/vendor/symfony/console/Symfony/Component/Console/Application.php:874
-    0.1536   11662320   8. phpDocumentor\Command\Project\RunCommand->execute() phar:///usr/local/bin/phpdoc/vendor/symfony/console/Symfony/Component/Console/Command/Command.php:257
-    0.2207   15612488   9. phpDocumentor\Transformer\Command\Project\TransformCommand->run() phar:///usr/local/bin/phpdoc/src/phpDocumentor/Command/Project/RunCommand.php:275
-    0.2210   15614656  10. phpDocumentor\Transformer\Command\Project\TransformCommand->execute() phar:///usr/local/bin/phpdoc/vendor/symfony/console/Symfony/Component/Console/Command/Command.php:257
-    0.2490   15941920  11. phpDocumentor\Console\Output\Output->writeTimedLog() phar:///usr/local/bin/phpdoc/src/phpDocumentor/Transformer/Command/Project/TransformCommand.php:206
-    0.2491   15941920  12. call_user_func_array:{phar:///usr/local/bin/phpdoc/src/phpDocumentor/Console/Output/Output.php:59}() phar:///usr/local/bin/phpdoc/src/phpDocumentor/Console/Output/Output.php:59
-    0.2491   15942312  13. phpDocumentor\Transformer\Transformer->execute() phar:///usr/local/bin/phpdoc/src/phpDocumentor/Console/Output/Output.php:59
-    0.2501   15949280  14. phpDocumentor\Transformer\Transformer->transformProject() phar:///usr/local/bin/phpdoc/src/phpDocumentor/Transformer/Transformer.php:141
-    0.7804   22107864  15. phpDocumentor\Transformer\Transformer->applyTransformationToProject() phar:///usr/local/bin/phpdoc/src/phpDocumentor/Transformer/Transformer.php:275
-    0.7807   22108024  16. phpDocumentor\Plugin\Twig\Writer\Twig->transform() phar:///usr/local/bin/phpdoc/src/phpDocumentor/Transformer/Transformer.php:312
-    0.7810   22112184  17. Twig_Environment->render() phar:///usr/local/bin/phpdoc/src/phpDocumentor/Plugin/Twig/Writer/Twig.php:116
-    0.8035   22392840  18. __TwigTemplate_5d47188fe2e7195c01c706173bd823281486177bef78cd10819bd87bb898cb0a->render() phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Environment.php:334
-    0.8035   22409352  19. __TwigTemplate_5d47188fe2e7195c01c706173bd823281486177bef78cd10819bd87bb898cb0a->display() phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Template.php:366
-    0.8036   22410480  20. __TwigTemplate_5d47188fe2e7195c01c706173bd823281486177bef78cd10819bd87bb898cb0a->displayWithErrorHandling() phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Template.php:355
-    0.8036   22410480  21. __TwigTemplate_5d47188fe2e7195c01c706173bd823281486177bef78cd10819bd87bb898cb0a->doDisplay() phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Template.php:381
-    0.8036   22410856  22. __TwigTemplate_eee52ef1ab4a254d190a335aef62cf815327e942a3e22a281a4af00e17b66da1->display() phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Environment.php(390) : eval()'d code:25
-    0.8036   22411552  23. __TwigTemplate_eee52ef1ab4a254d190a335aef62cf815327e942a3e22a281a4af00e17b66da1->displayWithErrorHandling() phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Template.php:355
-    0.8036   22411552  24. __TwigTemplate_eee52ef1ab4a254d190a335aef62cf815327e942a3e22a281a4af00e17b66da1->doDisplay() phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Template.php:381
-    0.8038   22411552  25. __TwigTemplate_eee52ef1ab4a254d190a335aef62cf815327e942a3e22a281a4af00e17b66da1->displayBlock() phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Environment.php(390) : eval()'d code:61
-    0.8038   22411552  26. __TwigTemplate_eee52ef1ab4a254d190a335aef62cf815327e942a3e22a281a4af00e17b66da1->block_header() phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Template.php:167
-    0.8040   22411928  27. twig_length_filter() phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Environment.php(390) : eval()'d code:213
-    0.8040   22411928  28. count() phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Extension/Core.php:1293
+    0.0007     392632   1. {main}() /usr/local/bin/phpdoc:0
+    0.0483    2220712   2. require('phar:///usr/local/bin/phpdoc/bin/phpdoc') /usr/local/bin/phpdoc:10
+    0.1434   10933200   3. phpDocumentor\Application->run() phar:///usr/local/bin/phpdoc/bin/phpdoc:23
+    0.1451   11660432   4. Cilex\Provider\Console\ContainerAwareApplication->run() phar:///usr/local/bin/phpdoc/src/phpDocumentor/Application.php:183
+    0.1452   11660432   5. Cilex\Provider\Console\ContainerAwareApplication->doRun() phar:///usr/local/bin/phpdoc/vendor/symfony/console/Symfony/Component/Console/Application.php:126
+    0.1453   11660432   6. Cilex\Provider\Console\ContainerAwareApplication->doRunCommand() phar:///usr/local/bin/phpdoc/vendor/symfony/console/Symfony/Component/Console/Application.php:195
+    0.1453   11660432   7. phpDocumentor\Command\Project\RunCommand->run() phar:///usr/local/bin/phpdoc/vendor/symfony/console/Symfony/Component/Console/Application.php:874
+    0.1455   11662320   8. phpDocumentor\Command\Project\RunCommand->execute() phar:///usr/local/bin/phpdoc/vendor/symfony/console/Symfony/Component/Console/Command/Command.php:257
+    0.2430   16543120   9. phpDocumentor\Transformer\Command\Project\TransformCommand->run() phar:///usr/local/bin/phpdoc/src/phpDocumentor/Command/Project/RunCommand.php:275
+    0.2431   16545288  10. phpDocumentor\Transformer\Command\Project\TransformCommand->execute() phar:///usr/local/bin/phpdoc/vendor/symfony/console/Symfony/Component/Console/Command/Command.php:257
+    0.2725   16873104  11. phpDocumentor\Console\Output\Output->writeTimedLog() phar:///usr/local/bin/phpdoc/src/phpDocumentor/Transformer/Command/Project/TransformCommand.php:206
+    0.2725   16873104  12. call_user_func_array:{phar:///usr/local/bin/phpdoc/src/phpDocumentor/Console/Output/Output.php:59}() phar:///usr/local/bin/phpdoc/src/phpDocumentor/Console/Output/Output.php:59
+    0.2725   16873496  13. phpDocumentor\Transformer\Transformer->execute() phar:///usr/local/bin/phpdoc/src/phpDocumentor/Console/Output/Output.php:59
+    0.2739   16880464  14. phpDocumentor\Transformer\Transformer->transformProject() phar:///usr/local/bin/phpdoc/src/phpDocumentor/Transformer/Transformer.php:141
+    0.5292   19652160  15. phpDocumentor\Transformer\Transformer->applyTransformationToProject() phar:///usr/local/bin/phpdoc/src/phpDocumentor/Transformer/Transformer.php:275
+    0.5293   19652320  16. phpDocumentor\Plugin\Twig\Writer\Twig->transform() phar:///usr/local/bin/phpdoc/src/phpDocumentor/Transformer/Transformer.php:312
+    0.5295   19656480  17. Twig_Environment->render() phar:///usr/local/bin/phpdoc/src/phpDocumentor/Plugin/Twig/Writer/Twig.php:116
+    0.5302   19705504  18. __TwigTemplate_5d47188fe2e7195c01c706173bd823281486177bef78cd10819bd87bb898cb0a->render() phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Environment.php:334
+    0.5302   19722016  19. __TwigTemplate_5d47188fe2e7195c01c706173bd823281486177bef78cd10819bd87bb898cb0a->display() phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Template.php:366
+    0.5302   19723144  20. __TwigTemplate_5d47188fe2e7195c01c706173bd823281486177bef78cd10819bd87bb898cb0a->displayWithErrorHandling() phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Template.php:355
+    0.5302   19723144  21. __TwigTemplate_5d47188fe2e7195c01c706173bd823281486177bef78cd10819bd87bb898cb0a->doDisplay() phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Template.php:381
+    0.5302   19723520  22. __TwigTemplate_eee52ef1ab4a254d190a335aef62cf815327e942a3e22a281a4af00e17b66da1->display() /private/var/folders/x8/7w7vt16n75b9lz1bc9trdljh0000gn/T/phpdoc-twig-cache/4/8/481b6300aeee003e7fa92af054dfd34e32f4c60b6602e6f8b44737031671321c.php:25
+    0.5302   19724216  23. __TwigTemplate_eee52ef1ab4a254d190a335aef62cf815327e942a3e22a281a4af00e17b66da1->displayWithErrorHandling() phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Template.php:355
+    0.5302   19724216  24. __TwigTemplate_eee52ef1ab4a254d190a335aef62cf815327e942a3e22a281a4af00e17b66da1->doDisplay() phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Template.php:381
+    0.5310   19788344  25. __TwigTemplate_eee52ef1ab4a254d190a335aef62cf815327e942a3e22a281a4af00e17b66da1->displayBlock() /private/var/folders/x8/7w7vt16n75b9lz1bc9trdljh0000gn/T/phpdoc-twig-cache/f/5/f576242bd90d5bc0258768378a9af92620cef7cd9ea1a80e6b3fd8f0581bee74.php:61
+    0.5310   19788344  26. __TwigTemplate_eee52ef1ab4a254d190a335aef62cf815327e942a3e22a281a4af00e17b66da1->block_header() phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Template.php:167
+    0.5313   19788720  27. twig_length_filter() /private/var/folders/x8/7w7vt16n75b9lz1bc9trdljh0000gn/T/phpdoc-twig-cache/f/5/f576242bd90d5bc0258768378a9af92620cef7cd9ea1a80e6b3fd8f0581bee74.php:213
+    0.5313   19788720  28. count() phar:///usr/local/bin/phpdoc/vendor/twig/twig/lib/Twig/Extension/Core.php:1293
 
                             </ul>
                         </li>
@@ -156,7 +156,7 @@ Call Stack:
             Template is built using <a href="http://twitter.github.com/bootstrap/">Twitter Bootstrap 2</a> and icons provided by
             <a href="http://glyphicons.com/">Glyphicons</a>.<br/>
             Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and<br/>
-            generated on Wed, 23 May 2018 18:08:56 +0000.<br/>
+            generated on Wed, 23 May 2018 18:17:14 +0000.<br/>
     </footer>
     </body>
 </html>

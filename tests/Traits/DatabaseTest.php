@@ -5,7 +5,7 @@
  * @package     laravel-database-encryption
  * @link        https://github.com/austinheap/laravel-database-encryption
  * @author      Austin Heap <me@austinheap.com>
- * @version     v0.1.0
+ * @version     v0.1.2
  */
 
 namespace AustinHeap\Database\Encryption\Tests\Traits;
@@ -20,19 +20,19 @@ class DatabaseTest extends DatabaseTestCase
 {
     public function testCreate()
     {
-        $model = DatabaseModel::create($this->randomStrings());
+        $model = DatabaseModel::create($this->randomValues());
 
         $this->assertTrue($model->exists);
     }
 
     public function testUpdate()
     {
-        $model = DatabaseModel::create($this->randomStrings());
+        $model = DatabaseModel::create($this->randomValues());
 
         $this->assertTrue($model->exists);
 
         $new_model = DatabaseModel::findOrFail($model->id);
-        $new_model->update($this->randomStrings());
+        $new_model->update($this->randomValues());
 
         $this->assertNotEquals($model->getOriginal('should_be_encrypted'), $new_model->getOriginal('should_be_encrypted'));
         $this->assertNotEquals($model->should_be_encrypted, $new_model->should_be_encrypted);
@@ -42,11 +42,11 @@ class DatabaseTest extends DatabaseTestCase
 
     public function testUpdateShouldBeEncrypted()
     {
-        $model = DatabaseModel::create($this->randomStrings());
+        $model = DatabaseModel::create($this->randomValues());
 
         $this->assertTrue($model->exists);
 
-        $strings   = $this->randomStrings();
+        $strings   = $this->randomValues();
         $new_model = DatabaseModel::findOrFail($model->id);
         $new_model->update(['should_be_encrypted' => $strings['should_be_encrypted']]);
 
@@ -58,11 +58,11 @@ class DatabaseTest extends DatabaseTestCase
 
     public function testUpdateShouldntBeEncrypted()
     {
-        $model = DatabaseModel::create($this->randomStrings());
+        $model = DatabaseModel::create($this->randomValues());
 
         $this->assertTrue($model->exists);
 
-        $strings   = $this->randomStrings();
+        $strings   = $this->randomValues();
         $new_model = DatabaseModel::findOrFail($model->id);
         $new_model->update(['shouldnt_be_encrypted' => $strings['shouldnt_be_encrypted']]);
 
@@ -74,7 +74,7 @@ class DatabaseTest extends DatabaseTestCase
 
     public function testGetArrayableAttributes()
     {
-        $strings = $this->randomStrings();
+        $strings = $this->randomValues();
         $model = DatabaseModel::create($strings);
 
         $this->assertTrue($model->exists);
@@ -82,9 +82,12 @@ class DatabaseTest extends DatabaseTestCase
         $attributes = $this->callProtectedMethod($model, 'getArrayableAttributes');
 
         $this->assertTrue(is_array($attributes));
-        $this->assertCount(5, $attributes);
+        $this->assertCount(9, $attributes);
 
-        foreach (['should_be_encrypted', 'shouldnt_be_encrypted', 'updated_at', 'created_at', 'id'] as $key) {
+        foreach (['should_be_encrypted', 'shouldnt_be_encrypted',
+                  'should_be_encrypted_float', 'shouldnt_be_encrypted_float',
+                  'should_be_encrypted_int', 'shouldnt_be_encrypted_int',
+                  'updated_at', 'created_at', 'id'] as $key) {
             $this->assertArrayHasKey($key, $attributes);
         }
 
