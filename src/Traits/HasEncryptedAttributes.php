@@ -3,7 +3,7 @@
  * src/Traits/HasEncryptedAttributes.php.
  *
  * @author      Austin Heap <me@austinheap.com>
- * @version     v0.1.0
+ * @version     v0.1.2
  */
 declare(strict_types=1);
 

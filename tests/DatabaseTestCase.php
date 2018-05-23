@@ -5,7 +5,7 @@
  * @package     laravel-database-encryption
  * @link        https://github.com/austinheap/laravel-database-encryption
  * @author      Austin Heap <me@austinheap.com>
- * @version     v0.1.0
+ * @version     v0.1.2
  */
 
 namespace AustinHeap\Database\Encryption\Tests;
@@ -89,7 +89,8 @@ class DatabaseTestCase extends TestCase
             $statement = file_get_contents(__DIR__ . '/Database/' . $statement);
         }
 
-        $file = __DIR__ . '/testing.sql';
+        $id = uniqid();
+        $file = __DIR__ . '/testing-'.$id.'.sql';
         file_put_contents($file, is_null($database) ? $statement : 'USE ' . $database . '; ' . $statement);
         $cmd = 'mysql -u' . env('TESTING_DB_USER', 'root') .
                (empty(env('TESTING_DB_PASS', '')) ? '' : ' -p' . env('TESTING_DB_PASS', '')) .
@@ -104,18 +105,22 @@ class DatabaseTestCase extends TestCase
         $ids = [];
 
         for ($x = 0; $x < $count; $x++) {
-            $model = DatabaseModel::create($this->randomStrings());
+            $model = DatabaseModel::create($this->randomValues());
             $ids[] = $model->id;
         }
 
         return $ids;
     }
 
-    protected function randomStrings(): array
+    protected function randomValues(): array
     {
         $this->last_random_strings = [
             'should_be_encrypted' => $this->newRandom('test-value-that-should-be-encrypted-%s'),
             'shouldnt_be_encrypted' => $this->newRandom('test-value-that-should-not-be-encrypted-%s'),
+            'should_be_encrypted_float' => (float) rand(1, 9999) / 1000,
+            'shouldnt_be_encrypted_float' => (float) rand(1, 9999) / 1000,
+            'should_be_encrypted_int' => (int) rand(1, 9999),
+            'shouldnt_be_encrypted_int' => (int) rand(1, 9999),
         ];
 
         return $this->last_random_strings;
