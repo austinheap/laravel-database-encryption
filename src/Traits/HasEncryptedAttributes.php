@@ -163,12 +163,17 @@ trait HasEncryptedAttributes
      *
      * @param string $value
      *
-     * @return null|string
+     * @return null|mixed
+     * @throws \Throwable
      */
-    public function decryptedAttribute($value): ?string
+    public function decryptedAttribute($value)
     {
         $characters = DatabaseEncryption::getControlCharacters('header');
-        $value = substr($value, strpos($value, $characters['stop']['string']));
+
+        throw_if(!array_key_exists('stop', $characters), DecryptException::class, "Cannot decrypt model attribute not originally encrypted by this package!");
+
+        $offset = strpos($value, $characters['stop']['string']);
+        $value = substr($value, $offset);
 
         return Crypt::decrypt($value);
     }
