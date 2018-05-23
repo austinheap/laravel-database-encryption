@@ -170,7 +170,7 @@ trait HasEncryptedAttributes
     {
         $characters = DatabaseEncryption::getControlCharacters('header');
 
-        throw_if(!array_key_exists('stop', $characters), DecryptException::class, "Cannot decrypt model attribute not originally encrypted by this package!");
+        throw_if(! array_key_exists('stop', $characters), DecryptException::class, 'Cannot decrypt model attribute not originally encrypted by this package!');
 
         $offset = strpos($value, $characters['stop']['string']);
         $value = substr($value, $offset);
