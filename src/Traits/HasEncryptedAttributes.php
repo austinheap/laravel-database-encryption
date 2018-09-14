@@ -123,7 +123,7 @@ trait HasEncryptedAttributes
      */
     protected function shouldEncrypt($key): bool
     {
-        $encrypt = DatabaseEncryption::isEnabled() && isset($this->encrypted) ? $this->encrypted : [];
+        $encrypt = DatabaseEncryption::isEnabled() && isset($this->encrypted) && is_array($this->encrypted) ? $this->encrypted : [];
 
         return in_array($key, $encrypt);
     }
