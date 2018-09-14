@@ -58,7 +58,7 @@ class DatabaseTest extends DatabaseTestCase
 
     public function testUpdateShouldntBeEncrypted()
     {
-        $model = DatabaseModel::create($this->randomValues());
+        $model = DatabaseModel::create($this->randomValues())->refresh();
 
         $this->assertTrue($model->exists);
 
