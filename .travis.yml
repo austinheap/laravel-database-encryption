@@ -1,8 +1,19 @@
 language: php
 
-php:
-  - 7.2
-  - 7.1
+matrix:
+  include:
+    - php: 7.1
+      env: LARAVEL=55
+    - php: 7.1
+      env: LARAVEL=56
+    - php: 7.1
+      env: LARAVEL=57
+    - php: 7.2
+      env: LARAVEL=55
+    - php: 7.2
+      env: LARAVEL=56
+    - php: 7.2
+      env: LARAVEL=57
 
 services:
   - mysql
@@ -16,7 +27,27 @@ before_script:
   - composer install --prefer-source --no-interaction
 
 script:
-  - vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+  # Packages: Laravel 5.5.x
+  - if [ "$LARAVEL" = "55" ] ; then composer require "phpunit/phpunit:6.*" --no-update ; fi
+  - if [ "$LARAVEL" = "55" ] ; then composer require "laravel/framework:5.5.*" --no-update ; fi
+  - if [ "$LARAVEL" = "55" ] ; then composer require "orchestra/database:3.5.*" --no-update ; fi
+  - if [ "$LARAVEL" = "55" ] ; then composer require "orchestra/testbench:3.5.*" --no-update ; fi
+  # Packages: Laravel 5.6.x
+  - if [ "$LARAVEL" = "56" ] ; then composer require "phpunit/phpunit:7.*" --no-update ; fi
+  - if [ "$LARAVEL" = "56" ] ; then composer require "laravel/framework:5.6.*" --no-update ; fi
+  - if [ "$LARAVEL" = "56" ] ; then composer require "orchestra/database:3.6.*" --no-update ; fi
+  - if [ "$LARAVEL" = "56" ] ; then composer require "orchestra/testbench:3.6.*" --no-update ; fi
+  # Packages: Laravel 5.7.x
+  - if [ "$LARAVEL" = "57" ] ; then composer require "phpunit/phpunit:7.*" --no-update ; fi
+  - if [ "$LARAVEL" = "57" ] ; then composer require "laravel/framework:5.7.*" --no-update ; fi
+  - if [ "$LARAVEL" = "57" ] ; then composer require "orchestra/database:3.7.x-dev as 3.7" --no-update ; fi
+  - if [ "$LARAVEL" = "57" ] ; then composer require "orchestra/testbench:3.7.*" --no-update ; fi
+  # Packages: Update
+  - composer update --prefer-source --no-interaction
+  # Tests: Configure
+  - if [ "$LARAVEL" = "" ] ; then export LOG="build/logs/clover.xml" ; else export LOG="build/logs/clover-$LARAVEL.xml" ; fi
+  # Tests: Run
+  - vendor/bin/phpunit --coverage-clover "$LOG"
 
 after_script:
   - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
