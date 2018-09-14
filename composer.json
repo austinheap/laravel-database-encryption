@@ -39,7 +39,7 @@
         }
     ],
     "replace": {
-        "delatbabel/elocryptfive": "1.5.*",
+        "delatbabel/elocryptfive": "1.5.*|1.*",
         "dtisgodsson/elocrypt": "1.*"
     },
     "conflict": {

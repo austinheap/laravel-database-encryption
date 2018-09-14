@@ -6,7 +6,6 @@
 [![Current Release](https://img.shields.io/github/release/austinheap/laravel-database-encryption.svg)](https://github.com/austinheap/laravel-database-encryption/releases)
 [![Total Downloads](https://img.shields.io/packagist/dt/austinheap/laravel-database-encryption.svg)](https://packagist.org/packages/austinheap/laravel-database-encryption)
 [![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=master)](https://travis-ci.org/austinheap/laravel-database-encryption)
-[![Dependency Status](https://gemnasium.com/badges/github.com/austinheap/laravel-database-encryption.svg)](https://gemnasium.com/github.com/austinheap/laravel-database-encryption)
 [![Scrutinizer CI](https://scrutinizer-ci.com/g/austinheap/laravel-database-encryption/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/austinheap/laravel-database-encryption/)
 [![StyleCI](https://styleci.io/repos/113929569/shield?branch=master)](https://styleci.io/repos/113929569)
 [![Maintainability](https://api.codeclimate.com/v1/badges/a63deda99383852c739b/maintainability)](https://codeclimate.com/github/austinheap/laravel-database-encryption/maintainability)
@@ -40,6 +39,7 @@ directory. The most logical place to start are the [docs for the `HasEncryptedAt
 
 * [Summary](#a-package-for-automatically-encrypting-and-decrypting-eloquent-attributes-in-laravel-55-based-on-configuration-settings)
 * [Requirements](#requirements)
+* [Status](#status)
 * [Schemas](#schemas)
 * [Installation](#installation)
     + [Step 1: Composer](#step-1-composer)
@@ -61,9 +61,17 @@ directory. The most logical place to start are the [docs for the `HasEncryptedAt
 
 ## Requirements
 
-* Laravel 5.5.*
-* PHP >= 7.1.0
+* Laravel: 5.5, 5.6, or 5.7
+* PHP: 7.1 or 7.2
 * PHP [OpenSSL extension](http://php.net/manual/en/book.openssl.php)
+
+## Status
+
+**Framework**|**Version**|**Release**|**Status**|**Tests**
+:-----:|:-----:|:-----:|:-----:|:-----:
+Laravel|[v5.5](https://laravel.com/docs/5.5/releases)|[v0.1.1](https://github.com/austinheap/laravel-database-encryption/releases/tag/v0.1.1) ([Packagist](https://packagist.org/packages/austinheap/laravel-database-encryption#v0.1.1))|Stable|Passing
+Laravel|[v5.6](https://laravel.com/docs/5.6/releases)|[v0.1.1](https://github.com/austinheap/laravel-database-encryption/releases/tag/v0.1.1) ([Packagist](https://packagist.org/packages/austinheap/laravel-database-encryption#v0.1.1))|Stable|Passing
+Laravel|[v5.7](https://laravel.com/docs/5.7/releases)|[v0.2.0](https://github.com/austinheap/laravel-database-encryption/releases/tag/v0.2.0) ([Packagist](https://packagist.org/packages/austinheap/laravel-database-encryption#v0.2.0))|Beta|Passing
 
 ## Schemas
 
@@ -92,15 +100,15 @@ Or add the package to your `composer.json`:
 ```json
 {
     "require": {
-        "austinheap/laravel-database-encryption": "0.1.0"
+        "austinheap/laravel-database-encryption": "^0.2.*"
     }
 }
 ```
 
 ### Step 2: Enable the package (Optional)
 
-This package implements Laravel 5.5's auto-discovery feature. After you install it the
-package provider and facade are added automatically.
+This package implements Laravel auto-discovery feature. After you install it the package
+provider and facade are added automatically.
 
 If you would like to declare the provider and/or alias explicitly, you may do so by first
 adding the service provider to your `config/app.php` file:

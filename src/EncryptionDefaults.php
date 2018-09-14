@@ -3,7 +3,7 @@
  * src/EncryptionDefaults.php.
  *
  * @author      Austin Heap <me@austinheap.com>
- * @version     v0.1.2
+ * @version     v0.2.0
  */
 declare(strict_types=1);
 

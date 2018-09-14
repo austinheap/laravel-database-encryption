@@ -5,7 +5,7 @@
  * @package     laravel-database-encryption
  * @link        https://github.com/austinheap/laravel-database-encryption
  * @author      Austin Heap <me@austinheap.com>
- * @version     v0.1.2
+ * @version     v0.2.0
  */
 
 namespace AustinHeap\Database\Encryption\Tests\Traits;
@@ -50,24 +50,23 @@ class DatabaseTest extends DatabaseTestCase
         $new_model = DatabaseModel::findOrFail($model->id);
         $new_model->update(['should_be_encrypted' => $strings['should_be_encrypted']]);
 
+        $this->assertTrue(self::callProtectedMethod($model, 'shouldEncrypt', ['should_be_encrypted']));
         $this->assertNotEquals($model->getOriginal('should_be_encrypted'), $new_model->getOriginal('should_be_encrypted'));
         $this->assertNotEquals($model->should_be_encrypted, $new_model->should_be_encrypted);
-        $this->assertEquals($model->getOriginal('shouldnt_be_encrypted'), $new_model->getOriginal('shouldnt_be_encrypted'));
-        $this->assertEquals($model->shouldnt_be_encrypted, $new_model->shouldnt_be_encrypted);
     }
 
     public function testUpdateShouldntBeEncrypted()
     {
-        $model = DatabaseModel::create($this->randomValues())->refresh();
+        $model = DatabaseModel::create($this->randomValues());
 
         $this->assertTrue($model->exists);
 
         $strings   = $this->randomValues();
         $new_model = DatabaseModel::findOrFail($model->id);
+
         $new_model->update(['shouldnt_be_encrypted' => $strings['shouldnt_be_encrypted']]);
 
-        $this->assertEquals($model->getOriginal('should_be_encrypted'), $new_model->getOriginal('should_be_encrypted'));
-        $this->assertEquals($model->should_be_encrypted, $new_model->should_be_encrypted);
+        $this->assertFalse(self::callProtectedMethod($model, 'shouldEncrypt', ['shouldnt_be_encrypted']));
         $this->assertNotEquals($model->getOriginal('shouldnt_be_encrypted'), $new_model->getOriginal('shouldnt_be_encrypted'));
         $this->assertNotEquals($model->shouldnt_be_encrypted, $new_model->shouldnt_be_encrypted);
     }
