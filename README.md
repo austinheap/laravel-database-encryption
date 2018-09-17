@@ -100,7 +100,7 @@ Or add the package to your `composer.json`:
 ```json
 {
     "require": {
-        "austinheap/laravel-database-encryption": "^0.2.*"
+        "austinheap/laravel-database-encryption": "^0.2"
     }
 }
 ```
