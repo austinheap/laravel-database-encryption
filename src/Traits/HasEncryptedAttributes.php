@@ -58,7 +58,7 @@ use AustinHeap\Database\Encryption\EncryptionFacade as DatabaseEncryption;
  * - getAttributeFromArray -- calls getArrayableAttributes
  * - getArrayableAttributes -- has been over-ridden here.
  * - setAttribute -- has been over-ridden here.
- * - getAttributes -- has been over-ridden here.
+ * - getUnencryptedAttributes -- calls doDecryptAttributes()
  *
  * @see         Illuminate\Support\Facades\Crypt
  * @see         Illuminate\Contracts\Encryption\Encrypter
@@ -312,11 +312,11 @@ trait HasEncryptedAttributes
     }
 
     /**
-     * Get all of the current attributes on the model.
+     * Get all of the current unencrypted attributes on the model.
      *
      * @return array
      */
-    public function getAttributes()
+    public function getUnencryptedAttributes()
     {
         return $this->doDecryptAttributes(parent::getAttributes());
     }

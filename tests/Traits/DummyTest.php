@@ -21,7 +21,7 @@ class DummyTest extends TestCase
     protected function doTest($attributes)
     {
         $model            = new DummyModel($attributes);
-        $model_attributes = $model->getAttributes();
+        $model_attributes = $model->getUnencryptedAttributes();
         $prefix           = self::callProtectedMethod($model, 'getEncryptionPrefix');
 
         $this->assertEquals($attributes['dont_encrypt'], $model->attributes['dont_encrypt']);
