@@ -110,4 +110,26 @@ class DatabaseTest extends DatabaseTestCase
         $this->assertEquals($strings['shouldnt_be_encrypted'], $attributes['shouldnt_be_encrypted']);
         $this->assertEquals($strings['should_be_encrypted'], $attributes['should_be_encrypted']);
     }
+
+    public function testIsEncryptableExists()
+    {
+        $strings = $this->randomValues();
+        $model   = DatabaseModel::create($strings);
+
+        $this->assertTrue($model->exists);
+        $this->assertTrue(self::callProtectedMethod($model, 'isEncryptable'));
+    }
+
+    public function testIsEncryptableNew()
+    {
+        $strings = $this->randomValues();
+        $model = new DatabaseModel();
+
+        foreach ($strings as $key => $value) {
+            $model->$key = $value;
+        }
+
+        $this->assertFalse($model->exists);
+        $this->assertFalse(self::callProtectedMethod($model, 'isEncryptable'));
+    }
 }

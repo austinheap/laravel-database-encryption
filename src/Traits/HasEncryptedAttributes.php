@@ -125,7 +125,19 @@ trait HasEncryptedAttributes
     {
         $encrypt = DatabaseEncryption::isEnabled() && isset($this->encrypted) && is_array($this->encrypted) ? $this->encrypted : [];
 
-        return in_array($key, $encrypt);
+        return in_array($key, $encrypt, true);
+    }
+
+    /**
+     * Determine whether a model is ready for encryption.
+     *
+     * @return bool
+     */
+    protected function isEncryptable(): bool
+    {
+        $exists = property_exists($this, 'exists');
+
+        return $exists === false || ($exists === true && $this->exists === true);
     }
 
     /**
@@ -318,6 +330,6 @@ trait HasEncryptedAttributes
      */
     public function getAttributes()
     {
-        return $this->exists ? $this->doDecryptAttributes(parent::getAttributes()) : parent::getAttributes();
+        return $this->isEncryptable() ? $this->doDecryptAttributes(parent::getAttributes()) : parent::getAttributes();
     }
 }

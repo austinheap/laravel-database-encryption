@@ -40,8 +40,19 @@ class DummyTest extends TestCase
     public function testEncryptStringWithPlus()
     {
         $this->doTest([
-                          'dont_encrypt' => '12345+' . rand(111111, 999999) . '@gmail.com',
-                          'encrypt_me'   => 'abcde+' . str_random() . '@gmail.com',
-                      ]);
+            'dont_encrypt' => '12345+' . rand(111111, 999999) . '@gmail.com',
+            'encrypt_me'   => 'abcde+' . str_random() . '@gmail.com',
+        ]);
+    }
+
+    public function testIsEncryptable()
+    {
+        $attributes = [
+            'dont_encrypt' => '12345+' . rand(111111, 999999) . '@gmail.com',
+            'encrypt_me'   => 'abcde+' . str_random() . '@gmail.com',
+        ];
+        $model      = new DummyModel($attributes);
+
+        $this->assertTrue(self::callProtectedMethod($model, 'isEncryptable'));
     }
 }
