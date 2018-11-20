@@ -318,6 +318,6 @@ trait HasEncryptedAttributes
      */
     public function getAttributes()
     {
-        return $this->doDecryptAttributes(parent::getAttributes());
+        return $this->exists ? $this->doDecryptAttributes(parent::getAttributes()) : parent::getAttributes();
     }
 }
