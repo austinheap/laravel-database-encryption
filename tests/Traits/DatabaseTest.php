@@ -42,31 +42,48 @@ class DatabaseTest extends DatabaseTestCase
 
     public function testUpdateShouldBeEncrypted()
     {
-        $model = DatabaseModel::create($this->randomValues());
+        $strings = $this->randomValues();
+        $model = DatabaseModel::create($strings);
 
         $this->assertTrue($model->exists);
+        $this->assertTrue(self::callProtectedMethod($model, 'shouldEncrypt', ['should_be_encrypted']));
+
+        $this->assertNotEquals($strings['should_be_encrypted'], $model->getOriginal('should_be_encrypted'));
+        $this->assertEquals($strings['should_be_encrypted'], $model->should_be_encrypted);
 
         $strings   = $this->randomValues();
         $new_model = DatabaseModel::findOrFail($model->id);
-        $new_model->update(['should_be_encrypted' => $strings['should_be_encrypted']]);
 
         $this->assertTrue(self::callProtectedMethod($model, 'shouldEncrypt', ['should_be_encrypted']));
+
+        $new_model->update(['should_be_encrypted' => $strings['should_be_encrypted']]);
+
         $this->assertNotEquals($model->getOriginal('should_be_encrypted'), $new_model->getOriginal('should_be_encrypted'));
         $this->assertNotEquals($model->should_be_encrypted, $new_model->should_be_encrypted);
+        $this->assertEquals($model->getOriginal('shouldnt_be_encrypted'), $new_model->getOriginal('shouldnt_be_encrypted'));
+        $this->assertEquals($model->shouldnt_be_encrypted, $new_model->shouldnt_be_encrypted);
     }
 
     public function testUpdateShouldntBeEncrypted()
     {
-        $model = DatabaseModel::create($this->randomValues());
+        $strings = $this->randomValues();
+        $model   = DatabaseModel::create($strings);
 
         $this->assertTrue($model->exists);
+        $this->assertFalse(self::callProtectedMethod($model, 'shouldEncrypt', ['shouldnt_be_encrypted']));
+
+        $this->assertEquals($strings['shouldnt_be_encrypted'], $model->getOriginal('shouldnt_be_encrypted'));
+        $this->assertEquals($strings['shouldnt_be_encrypted'], $model->shouldnt_be_encrypted);
 
         $strings   = $this->randomValues();
         $new_model = DatabaseModel::findOrFail($model->id);
 
+        $this->assertFalse(self::callProtectedMethod($model, 'shouldEncrypt', ['shouldnt_be_encrypted']));
+
         $new_model->update(['shouldnt_be_encrypted' => $strings['shouldnt_be_encrypted']]);
 
-        $this->assertFalse(self::callProtectedMethod($model, 'shouldEncrypt', ['shouldnt_be_encrypted']));
+        $this->assertEquals($model->getOriginal('should_be_encrypted'), $new_model->getOriginal('should_be_encrypted'));
+        $this->assertEquals($model->should_be_encrypted, $new_model->should_be_encrypted);
         $this->assertNotEquals($model->getOriginal('shouldnt_be_encrypted'), $new_model->getOriginal('shouldnt_be_encrypted'));
         $this->assertNotEquals($model->shouldnt_be_encrypted, $new_model->shouldnt_be_encrypted);
     }
@@ -74,7 +91,7 @@ class DatabaseTest extends DatabaseTestCase
     public function testGetArrayableAttributes()
     {
         $strings = $this->randomValues();
-        $model = DatabaseModel::create($strings);
+        $model   = DatabaseModel::create($strings);
 
         $this->assertTrue($model->exists);
 
