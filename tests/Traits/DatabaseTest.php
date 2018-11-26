@@ -25,6 +25,38 @@ class DatabaseTest extends DatabaseTestCase
         $this->assertTrue($model->exists);
     }
 
+    public function testCreateShouldBeEncryptedRaw()
+    {
+        $model = DatabaseModel::create($this->randomValues());
+
+        $this->assertTrue($model->exists);
+
+        $values = $model->getRawValues(['id', 'should_be_encrypted']);
+
+        $this->assertNotNull($values);
+        $this->assertTrue(is_array($values));
+        $this->assertArrayHasKey('id', $values);
+        $this->assertArrayHasKey('should_be_encrypted', $values);
+        $this->assertTrue(is_string($values['should_be_encrypted']));
+        $this->assertStringStartsWith(chr(1) . chr(2) . '__LARAVEL-DATABASE-ENCRYPTED-VERSION-', $values['should_be_encrypted']);
+    }
+
+    public function testCreateShouldntBeEncryptedRaw()
+    {
+        $model = DatabaseModel::create($this->randomValues());
+
+        $this->assertTrue($model->exists);
+
+        $values = $model->getRawValues(['id', 'shouldnt_be_encrypted']);
+
+        $this->assertNotNull($values);
+        $this->assertTrue(is_array($values));
+        $this->assertArrayHasKey('id', $values);
+        $this->assertArrayHasKey('shouldnt_be_encrypted', $values);
+        $this->assertTrue(is_string($values['shouldnt_be_encrypted']));
+        $this->assertStringStartsNotWith(chr(1) . chr(2) . '__LARAVEL-DATABASE-ENCRYPTED-VERSION-', $values['shouldnt_be_encrypted']);
+    }
+
     public function testUpdate()
     {
         $model = DatabaseModel::create($this->randomValues());
