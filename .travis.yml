@@ -59,14 +59,11 @@ script:
   - if [ "$LARAVEL" = "57" ] ; then composer require "orchestra/testbench:3.7.*" --no-update ; fi
   # Packages: Update
   - composer update --prefer-source --no-interaction
-  # Tests: Configure
-  - if [ "$LARAVEL" = "" ] ; then export LOG="build/logs/clover.xml" ; else export LOG="build/logs/clover-$LARAVEL.xml" ; fi
   # Tests: Run
-  - vendor/bin/phpunit --coverage-clover "$LOG"
+  - vendor/bin/phpunit --coverage-clover "$TRAVIS_BUILD_DIR/build/logs/clover.xml"
 
 after_script:
-  - export COVERAGE_FILE="$LOG"
-  - ./cc-test-reporter after-build --coverage-input-type clover --exit-code $TRAVIS_TEST_RESULT
+  - ./cc-test-reporter after-build --coverage-input-type clover --prefix "$TRAVIS_BUILD_DIR" --exit-code $TRAVIS_TEST_RESULT
 
 after_success:
   - vendor/bin/test-reporter
