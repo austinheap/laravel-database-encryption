@@ -60,9 +60,9 @@ use AustinHeap\Database\Encryption\EncryptionFacade as DatabaseEncryption;
  * - setAttribute -- has been over-ridden here.
  * - getAttributes -- has been over-ridden here.
  *
- * @see         Illuminate\Support\Facades\Crypt
- * @see         Illuminate\Contracts\Encryption\Encrypter
- * @see         Illuminate\Encryption\Encrypter
+ * @see         \Illuminate\Support\Facades\Crypt
+ * @see         \Illuminate\Contracts\Encryption\Encrypter
+ * @see         \Illuminate\Encryption\Encrypter
  * @link        http://laravel.com/docs/5.5/eloquent
  * @link        https://github.com/austinheap/laravel-database-encryption
  * @link        https://packagist.org/packages/austinheap/laravel-database-encryption

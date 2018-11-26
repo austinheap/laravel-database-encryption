@@ -16,10 +16,11 @@
 The purpose of this project is to create a set-it-and-forget-it package that can be
 installed without much effort to encrypt and decrypt Eloquent model attributes stored
 in your database tables, transparently. It is therefore highly opinionated but built
-for configuration.
+for [configuration](#step-3-configure-the-package).
 
-When enabled, it automagically begins encrypting data as it is stored in the model
-attributes and decrypting data as it is recalled from the model attributes.
+When [enabled](#step-2-enable-the-package-optional), it automagically begins encrypting
+data as it is stored in the model attributes and decrypting data as it is recalled from
+the model attributes.
 
 All data that is encrypted is prefixed with a header so that encrypted data can be
 easily identified, encryption keys rotated, and (optionally) versioning of the encrypted
@@ -53,7 +54,8 @@ directory. The most logical place to start are the [docs for the `HasEncryptedAt
     + [Can I manually encrypt or decrypt arbitrary data?](#can-i-manually-encrypt-or-decrypt-arbitrary-data)
     + [Can I search encrypted data?](#can-i-search-encrypted-data)
     + [Can I encrypt all my `User` model data?](#can-i-encrypt-all-my-user-model-data)
-    + [Is this package compatible with elocryptfive out-of-the-box?](#is-this-package-compatible-with-elocryptfive-out-of-the-box)
+    + [Is this package compatible with `elocryptfive` out-of-the-box?](#is-this-package-compatible-with-elocryptfive-out-of-the-box)
+    + [Is this package compatible with `insert-random-Eloquent-package-here`?](#is-this-package-compatible-with-insert-random-eloquent-package-here)
 * [Implementations](#implementations)
 * [Credits](#credits)
 * [Contributing](#contributing)
@@ -70,8 +72,8 @@ directory. The most logical place to start are the [docs for the `HasEncryptedAt
 **Framework**|**Version**|**Release**|**Status**|**PHP v7.1**|**PHP v7.2**|**PHP v7.3**
 :-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:
 Laravel|[v5.5](https://laravel.com/docs/5.5/releases)|[v0.1.1](https://github.com/austinheap/laravel-database-encryption/releases/tag/v0.1.1) ([Packagist](https://packagist.org/packages/austinheap/laravel-database-encryption#v0.1.1))|Stable|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.1.1)](https://travis-ci.org/austinheap/laravel-database-encryption)|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.1.1)](https://travis-ci.org/austinheap/laravel-database-encryption)|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.1.1)](https://travis-ci.org/austinheap/laravel-database-encryption)
-Laravel|[v5.6](https://laravel.com/docs/5.6/releases)|[v0.2.0](https://github.com/austinheap/laravel-database-encryption/releases/tag/v0.1.1) ([Packagist](https://packagist.org/packages/austinheap/laravel-database-encryption#v0.2.0))|Beta|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.0)](https://travis-ci.org/austinheap/laravel-database-encryption)|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.0)](https://travis-ci.org/austinheap/laravel-database-encryption)|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.0)](https://travis-ci.org/austinheap/laravel-database-encryption)
-Laravel|[v5.7](https://laravel.com/docs/5.7/releases)|[v0.2.0](https://github.com/austinheap/laravel-database-encryption/releases/tag/v0.2.0) ([Packagist](https://packagist.org/packages/austinheap/laravel-database-encryption#v0.2.0))|Beta|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.0)](https://travis-ci.org/austinheap/laravel-database-encryption)|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.0)](https://travis-ci.org/austinheap/laravel-database-encryption)|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.0)](https://travis-ci.org/austinheap/laravel-database-encryption)
+Laravel|[v5.6](https://laravel.com/docs/5.6/releases)|[v0.2.0-rc3](https://github.com/austinheap/laravel-database-encryption/releases/tag/v0.2.0-rc3) ([Packagist](https://packagist.org/packages/austinheap/laravel-database-encryption#v0.2.0-rc3))|Beta|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.0-rc3)](https://travis-ci.org/austinheap/laravel-database-encryption)|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.0-rc3)](https://travis-ci.org/austinheap/laravel-database-encryption)|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.0-rc3)](https://travis-ci.org/austinheap/laravel-database-encryption)
+Laravel|[v5.7](https://laravel.com/docs/5.7/releases)|[v0.2.0-rc3](https://github.com/austinheap/laravel-database-encryption/releases/tag/v0.2.0-rc3) ([Packagist](https://packagist.org/packages/austinheap/laravel-database-encryption#v0.2.0-rc3))|Beta|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.0-rc3)](https://travis-ci.org/austinheap/laravel-database-encryption)|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.0-rc3)](https://travis-ci.org/austinheap/laravel-database-encryption)|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.0-rc3)](https://travis-ci.org/austinheap/laravel-database-encryption)
 
 ## Schemas
 
@@ -277,7 +279,7 @@ the encrypted value as needed.
 
 No! The same issue with searching also applies to authentication because authentication requires search.
 
-### Is this package compatible with [elocryptfive](https://github.com/delatbabel/elocryptfive) out-of-the-box?
+### Is this package compatible with [`elocryptfive`](https://github.com/delatbabel/elocryptfive) out-of-the-box?
 
 No! While it _is_ a (more modern) replacement, it is not compatible directly out of the box. To migrate to this package from elocryptfive, you must:
 
@@ -290,6 +292,12 @@ No! While it _is_ a (more modern) replacement, it is not compatible directly out
 7. Profit!
 
 A pull request for automated migrations is more than welcome but is currently out of the scope of this project's goals.
+
+### Is this package compatible with `insert-random-Eloquent-package-here`?
+
+Probably not! It's not feasible to guarantee interoperability between random packages out there, especially packages that also heavily modify Eloquent's default behavior.
+
+Issues and pull requests regarding interoperability will not be accepted.
 
 ## Implementations
 
