@@ -3,31 +3,22 @@ language: php
 matrix:
   include:
     - php: 7.1
-      env: PHP=71
       env: LARAVEL=55
     - php: 7.1
-      env: PHP=71
       env: LARAVEL=56
     - php: 7.1
-      env: PHP=71
       env: LARAVEL=57
     - php: 7.2
-      env: PHP=72
       env: LARAVEL=55
     - php: 7.2
-      env: PHP=72
       env: LARAVEL=56
     - php: 7.2
-      env: PHP=72
       env: LARAVEL=57
     - php: 7.3
-      env: PHP=73
       env: LARAVEL=55
     - php: 7.3
-      env: PHP=73
       env: LARAVEL=56
     - php: 7.3
-      env: PHP=73
       env: LARAVEL=57
 
 services:
@@ -35,13 +26,14 @@ services:
 
 before_script:
   # Extensions: ext-uopz
-  - if [ "$PHP" = "71" ] ; then pecl install https://pecl.php.net/get/uopz-5.0.2.tgz ; fi
-  - if [ "$PHP" = "72" ] ; then pecl install https://pecl.php.net/get/uopz-5.0.2.tgz ; fi
-  - if [ "$PHP" = "73" ] ; then wget -O $TRAVIS_BUILD_DIR/uopz-5.0.2.tgz https://pecl.php.net/get/uopz-5.0.2.tgz ; fi
-  - if [ "$PHP" = "73" ] ; then tar xvf $TRAVIS_BUILD_DIR/uopz-5.0.2.tgz ; fi
-  - if [ "$PHP" = "73" ] ; then mv $TRAVIS_BUILD_DIR/uopz-5.0.2 $TRAVIS_BUILD_DIR/ext-uopz ; fi
-  - if [ "$PHP" = "73" ] ; then wget -O $TRAVIS_BUILD_DIR/ext-uopz/php73.patch https://gist.githubusercontent.com/cmb69/3060a552fc825497d066262ab31f3998/raw/428c0aee7d77b6c37ea3757bbc8b86cfc390d7ca/0001-Update-for-PHP-7.3.patch ; fi
-  - if [ "$PHP" = "73" ] ; then cd $TRAVIS_BUILD_DIR/ext-uopz && patch -p1 < php73.patch && phpize && ./configure && make && make install ; fi
+  - echo "TRAVIS_PHP_VERSION == $TRAVIS_PHP_VERSION"
+  - if [ "$TRAVIS_PHP_VERSION" = "7.1" ] ; then pecl install uopz ; fi
+  - if [ "$TRAVIS_PHP_VERSION" = "7.2" ] ; then pecl install uopz ; fi
+  - if [ "$TRAVIS_PHP_VERSION" = "7.3" ] ; then wget -O $TRAVIS_BUILD_DIR/uopz-5.0.2.tgz https://pecl.php.net/get/uopz-5.0.2.tgz ; fi
+  - if [ "$TRAVIS_PHP_VERSION" = "7.3" ] ; then tar xvf $TRAVIS_BUILD_DIR/uopz-5.0.2.tgz ; fi
+  - if [ "$TRAVIS_PHP_VERSION" = "7.3" ] ; then mv $TRAVIS_BUILD_DIR/uopz-5.0.2 $TRAVIS_BUILD_DIR/ext-uopz ; fi
+  - if [ "$TRAVIS_PHP_VERSION" = "7.3" ] ; then wget -O $TRAVIS_BUILD_DIR/ext-uopz/php73.patch https://gist.githubusercontent.com/cmb69/3060a552fc825497d066262ab31f3998/raw/428c0aee7d77b6c37ea3757bbc8b86cfc390d7ca/0001-Update-for-PHP-7.3.patch ; fi
+  - if [ "$TRAVIS_PHP_VERSION" = "7.3" ] ; then cd $TRAVIS_BUILD_DIR/ext-uopz && patch -p1 < php73.patch && phpize && ./configure && make && make install ; fi
   # Tests: Code Climate
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
