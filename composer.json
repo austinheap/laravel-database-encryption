@@ -15,10 +15,14 @@
         "aes",
         "laravel5",
         "laravel55",
+        "laravel56",
+        "laravel57",
         "l5",
         "laravel encryption",
         "laravel5 encryption",
         "laravel55 encryption",
+        "laravel56 encryption",
+        "laravel57 encryption",
         "eloquent encryption",
         "model encryption",
         "attribute encryption",
@@ -49,7 +53,7 @@
     "require": {
         "php": ">=7.1.0",
         "laravel/framework": "5.5.*|5.6.*|5.7.*",
-        "paragonie/random_compat": "^1.1|^2.0"
+        "paragonie/random_compat": "^2.0"
     },
     "require-dev": {
         "codeclimate/php-test-reporter": "dev-master",
