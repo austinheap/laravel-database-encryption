@@ -10,10 +10,13 @@
 
 namespace AustinHeap\Database\Encryption\Tests\Models;
 
+use DB, PDO, PDOException;
+use \Illuminate\Database\Eloquent\Model;
+
 /**
  * Class RealModel
  */
-abstract class RealModel extends \Illuminate\Database\Eloquent\Model
+abstract class RealModel extends Model
 {
     public function getRawValues(array $columns = null): ?array
     {
@@ -36,15 +39,15 @@ abstract class RealModel extends \Illuminate\Database\Eloquent\Model
         );
 
         try {
-            $dsn        = sprintf('mysql:dbname=%s;host=%s;charset=utf8', \DB::getDatabaseName(), env('TESTING_DB_HOST', '127.0.0.1'));
-            $connection = new \PDO($dsn, env('TESTING_DB_USER', 'root'), env('TESTING_DB_PASS', ''));
+            $dsn        = sprintf('mysql:dbname=%s;host=%s;charset=utf8', DB::getDatabaseName(), env('TESTING_DB_HOST', '127.0.0.1'));
+            $connection = new PDO($dsn, env('TESTING_DB_USER', 'root'), env('TESTING_DB_PASS', ''));
             $statement  = $connection->prepare($query);
 
             $statement->execute();
 
-            $result     = $statement->setFetchMode(\PDO::FETCH_ASSOC);
+            $result     = $statement->setFetchMode(PDO::FETCH_ASSOC);
             $rows       = is_bool($result) && $result === true ? $statement->fetchAll() : null;
-        } catch (\PDOException $exception) {
+        } catch (PDOException $exception) {
             return null;
         } finally {
             $connnection = null;
