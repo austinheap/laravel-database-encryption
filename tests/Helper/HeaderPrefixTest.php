@@ -24,11 +24,6 @@ class HeaderPrefixTest extends TestCase
         $helper = (new EncryptionHelper())->setHeaderPrefix(null);
 
         $this->assertAttributeEquals(null, 'prefixCache', $helper);
-
-        //        $helper->setHeaderPrefix($this->currentRandom());
-        //dump($helper->getHeaderPrefix());
-        //        $this->assertEquals($this->currentRandom(), $helper->getHeaderPrefix());
-        //        $this->assertAttributeSame($this->currentRandom(), 'prefixCache', $helper);
     }
 
     public function testHeaderPrefixValid()
