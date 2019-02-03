@@ -4,7 +4,7 @@
  * @package     laravel-database-encryption
  * @link        https://github.com/austinheap/laravel-database-encryption
  * @author      Austin Heap <me@austinheap.com>
- * @version     v0.2.0
+ * @version     v0.2.1
  */
 
 namespace AustinHeap\Database\Encryption\Tests\Helper;
