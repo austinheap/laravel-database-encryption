@@ -22,7 +22,7 @@ class DatabaseTestCase extends TestCase
 
     private $last_random_strings = null;
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->tearDownDatabase();
         parent::tearDown();
