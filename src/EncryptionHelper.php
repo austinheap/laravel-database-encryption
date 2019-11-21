@@ -3,14 +3,14 @@
  * src/EncryptionHelper.php.
  *
  * @author      Austin Heap <me@austinheap.com>
- * @version     v0.2.0
+ * @version     v0.2.1
  */
 declare(strict_types=1);
 
 namespace AustinHeap\Database\Encryption;
 
-use RuntimeException;
 use Illuminate\Support\Facades\Config;
+use RuntimeException;
 
 /**
  * EncryptionHelper.

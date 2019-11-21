@@ -8,18 +8,24 @@ matrix:
       env: LARAVEL=56
     - php: 7.1
       env: LARAVEL=57
+    - php: 7.1
+      env: LARAVEL=58
     - php: 7.2
       env: LARAVEL=55
     - php: 7.2
       env: LARAVEL=56
     - php: 7.2
       env: LARAVEL=57
+    - php: 7.2
+      env: LARAVEL=58
     - php: 7.3
       env: LARAVEL=55
     - php: 7.3
       env: LARAVEL=56
     - php: 7.3
       env: LARAVEL=57
+    - php: 7.3
+      env: LARAVEL=58
 
 services:
   - mysql
@@ -55,8 +61,13 @@ script:
   # Packages: Laravel 5.7.x
   - if [ "$LARAVEL" = "57" ] ; then composer require "phpunit/phpunit:7.*" --no-update ; fi
   - if [ "$LARAVEL" = "57" ] ; then composer require "laravel/framework:5.7.*" --no-update ; fi
-  - if [ "$LARAVEL" = "57" ] ; then composer require "orchestra/database:3.7.x-dev as 3.7" --no-update ; fi
+  - if [ "$LARAVEL" = "57" ] ; then composer require "orchestra/database:3.7.*" --no-update ; fi
   - if [ "$LARAVEL" = "57" ] ; then composer require "orchestra/testbench:3.7.*" --no-update ; fi
+  # Packages: Laravel 5.8.x
+  - if [ "$LARAVEL" = "58" ] ; then composer require "phpunit/phpunit:7.*" --no-update ; fi
+  - if [ "$LARAVEL" = "58" ] ; then composer require "laravel/framework:5.8.*" --no-update ; fi
+  - if [ "$LARAVEL" = "58" ] ; then composer require "orchestra/database:3.8.*" --no-update ; fi
+  - if [ "$LARAVEL" = "58" ] ; then composer require "orchestra/testbench:3.8.*" --no-update ; fi
   # Packages: Update
   - composer update --prefer-source --no-interaction
   # Tests: Run

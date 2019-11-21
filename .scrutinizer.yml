@@ -15,7 +15,7 @@ build:
                     format: 'clover'
     environment:
         php:
-            version: 7.1, 7.2
+            version: 7.2.13
 tools:
     php_loc:
         enabled: true

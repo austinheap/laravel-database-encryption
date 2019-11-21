@@ -3,19 +3,19 @@
  * src/Console/Commands/MigrateEncryptionCommand.php.
  *
  * @author      Austin Heap <me@austinheap.com>
- * @version     v0.2.0
+ * @version     v0.2.1
  */
 declare(strict_types=1);
 
 namespace AustinHeap\Database\Encryption\Console\Commands;
 
+use AustinHeap\Database\Encryption\EncryptionFacade as DatabaseEncryption;
 use Exception;
-use RuntimeException;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Config;
-use AustinHeap\Database\Encryption\EncryptionFacade as DatabaseEncryption;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use RuntimeException;
 
 /**
  * Class MigrateEncryptionCommand.

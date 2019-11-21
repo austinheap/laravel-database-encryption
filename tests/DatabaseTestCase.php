@@ -5,7 +5,7 @@
  * @package     laravel-database-encryption
  * @link        https://github.com/austinheap/laravel-database-encryption
  * @author      Austin Heap <me@austinheap.com>
- * @version     v0.2.0
+ * @version     v0.2.1
  */
 
 namespace AustinHeap\Database\Encryption\Tests;
@@ -22,13 +22,13 @@ class DatabaseTestCase extends TestCase
 
     private $last_random_strings = null;
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->tearDownDatabase();
         parent::tearDown();
     }
 
-    protected function getEnvironmentSetUp($app)
+    protected function getEnvironmentSetUp($app): void
     {
         if (is_null(self::$database)) {
             self::$database = 'laravel_database_encryption_testing_' . str_random(6);

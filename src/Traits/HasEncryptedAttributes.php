@@ -3,17 +3,17 @@
  * src/Traits/HasEncryptedAttributes.php.
  *
  * @author      Austin Heap <me@austinheap.com>
- * @version     v0.2.0
+ * @version     v0.2.1
  */
 declare(strict_types=1);
 
 namespace AustinHeap\Database\Encryption\Traits;
 
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Crypt;
+use AustinHeap\Database\Encryption\EncryptionFacade as DatabaseEncryption;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Encryption\EncryptException;
-use AustinHeap\Database\Encryption\EncryptionFacade as DatabaseEncryption;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 
 /**
  * HasEncryptedAttributes.
