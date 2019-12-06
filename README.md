@@ -63,7 +63,7 @@ directory. The most logical place to start are the [docs for the `HasEncryptedAt
 
 ## Requirements
 
-* Laravel: 5.5, 5.6, 5.7, or 5.8
+* Laravel: 5.5, 5.6, 5.7, 5.8, or 6.x
 * PHP: 7.1, 7.2, or 7.3
 * PHP [OpenSSL extension](http://php.net/manual/en/book.openssl.php)
 
@@ -75,6 +75,7 @@ Laravel|[v5.5](https://laravel.com/docs/5.5/releases)|[v0.1.0](https://github.co
 Laravel|[v5.6](https://laravel.com/docs/5.6/releases)|[v0.1.1](https://github.com/austinheap/laravel-database-encryption/releases/tag/v0.1.1) ([Packagist](https://packagist.org/packages/austinheap/laravel-database-encryption#v0.1.1))|Stable|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.1.1)](https://travis-ci.org/austinheap/laravel-database-encryption)|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.1.1)](https://travis-ci.org/austinheap/laravel-database-encryption)|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.1.1)](https://travis-ci.org/austinheap/laravel-database-encryption)
 Laravel|[v5.7](https://laravel.com/docs/5.7/releases)|[v0.2.0](https://github.com/austinheap/laravel-database-encryption/releases/tag/v0.2.0) ([Packagist](https://packagist.org/packages/austinheap/laravel-database-encryption#v0.2.0))|Stable|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.0)](https://travis-ci.org/austinheap/laravel-database-encryption)|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.0)](https://travis-ci.org/austinheap/laravel-database-encryption)|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.0)](https://travis-ci.org/austinheap/laravel-database-encryption)
 Laravel|[v5.8](https://laravel.com/docs/5.8/releases)|[v0.2.1](https://github.com/austinheap/laravel-database-encryption/releases/tag/v0.2.1) ([Packagist](https://packagist.org/packages/austinheap/laravel-database-encryption#v0.2.1))|Stable|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.1)](https://travis-ci.org/austinheap/laravel-database-encryption)|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.1)](https://travis-ci.org/austinheap/laravel-database-encryption)|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.1)](https://travis-ci.org/austinheap/laravel-database-encryption)
+Laravel|[v6.x](https://laravel.com/docs/6.x/releases)|[v0.2.2](https://github.com/austinheap/laravel-database-encryption/releases/tag/v0.2.2) ([Packagist](https://packagist.org/packages/austinheap/laravel-database-encryption#v0.2.2))|Stable|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.2)](https://travis-ci.org/austinheap/laravel-database-encryption)|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.2)](https://travis-ci.org/austinheap/laravel-database-encryption)|[![Build Status](https://travis-ci.org/austinheap/laravel-database-encryption.svg?branch=v0.2.2)](https://travis-ci.org/austinheap/laravel-database-encryption)
 
 ## Schemas
 

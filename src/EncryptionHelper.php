@@ -3,7 +3,7 @@
  * src/EncryptionHelper.php.
  *
  * @author      Austin Heap <me@austinheap.com>
- * @version     v0.2.1
+ * @version     v0.2.2
  */
 declare(strict_types=1);
 
