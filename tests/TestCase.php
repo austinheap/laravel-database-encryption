@@ -13,6 +13,7 @@ namespace AustinHeap\Database\Encryption\Tests;
 use AustinHeap\Database\Encryption\EncryptionFacade;
 use AustinHeap\Database\Encryption\EncryptionServiceProvider;
 use DB, RuntimeException, ReflectionClass;
+use Illuminate\Support\Str;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
 /**
@@ -25,7 +26,7 @@ class TestCase extends BaseTestCase
 
     protected function getEnvironmentSetUp($app)
     {
-        $app['config']->set('app.key', str_random(32));
+        $app['config']->set('app.key', Str::random(32));
         $app['config']->set('database-encryption.enabled', true);
     }
 

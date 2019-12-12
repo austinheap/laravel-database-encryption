@@ -19,7 +19,7 @@ matrix:
     - php: 7.2
       env: LARAVEL=58
     - php: 7.2
-      env: LARAVEL=6
+      env: LARAVEL=6x
     - php: 7.3
       env: LARAVEL=55
     - php: 7.3
@@ -29,7 +29,7 @@ matrix:
     - php: 7.3
       env: LARAVEL=58
     - php: 7.3
-      env: LARAVEL=6
+      env: LARAVEL=6x
 
 services:
   - mysql
@@ -63,11 +63,11 @@ script:
   - if [ "$LARAVEL" = "58" ] ; then composer require "laravel/framework:5.8.*" --no-update ; fi
   - if [ "$LARAVEL" = "58" ] ; then composer require "orchestra/database:3.8.*" --no-update ; fi
   - if [ "$LARAVEL" = "58" ] ; then composer require "orchestra/testbench:3.8.*" --no-update ; fi
-  # Packages: Laravel 6.x.x
-  - if [ "$LARAVEL" = "6" ] ; then composer require "phpunit/phpunit:^8.0" --no-update ; fi
-  - if [ "$LARAVEL" = "6" ] ; then composer require "laravel/framework:^6.0" --no-update ; fi
-  - if [ "$LARAVEL" = "6" ] ; then composer require "orchestra/database:^4.0" --no-update ; fi
-  - if [ "$LARAVEL" = "6" ] ; then composer require "orchestra/testbench:^4.0" --no-update ; fi
+  # Packages: Laravel ^6.0
+  - if [ "$LARAVEL" = "6x" ] ; then composer require "phpunit/phpunit:^8.3" --no-update ; fi
+  - if [ "$LARAVEL" = "6x" ] ; then composer require "laravel/framework:^6.0" --no-update ; fi
+  - if [ "$LARAVEL" = "6x" ] ; then composer require "orchestra/database:^4.0" --no-update ; fi
+  - if [ "$LARAVEL" = "6x" ] ; then composer require "orchestra/testbench:^4.0" --no-update ; fi
   # Packages: Install
   - composer install --prefer-source --no-interaction
   # Tests: Run
