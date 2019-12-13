@@ -1,0 +1,115 @@
+name: "Run unit tests"
+
+on:
+  - push
+
+jobs:
+  test:
+    name: "Build"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.1', '7.2', '7.3', '7.4']
+        laravel: ['5.5', '5.6', '5.7', '5.8', '6.x']
+        exclude:
+          # Laravel 6.x is 7.2+
+          - php: '7.1'
+            laravel: '6.x'
+    services:
+      database:
+        image: mysql:5
+        ports:
+          - 13306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: 'test'
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
+      - name: Setup PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@master
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: json,mbstring,pdo,mysql,dom
+          coverage: xdebug
+
+      - name: Start build on Code Climate
+        continue-on-error: true
+        run: |
+          curl -o ./cc-test-reporter -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64
+          chmod +x ./cc-test-reporter
+          ./cc-test-reporter before-build
+
+      - name: Get user-level Composer cache
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Setup Composer cache
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: composer-${{ runner.os }}-${{ matrix.laravel }}-${{ matrix.php }}-${{ hashFiles('**/composer.json') }}
+          restore-keys: |
+            composer-${{ runner.os }}-${{ matrix.laravel }}-${{ matrix.php }}-
+            composer-${{ runner.os }}-${{ matrix.laravel }}-
+            composer-${{ runner.os }}-
+
+
+      - name: Install dependencies for Laravel 5.5
+        if: ( matrix.laravel == '5.5' )
+        run: |
+          composer require "phpunit/phpunit:^6.0" --no-update
+          composer require "laravel/framework:~5.5.0" --no-update
+          composer require "orchestra/database:~3.5.0" --no-update
+          composer require "orchestra/testbench:~3.5.0" --no-update
+
+      - name: Install dependencies for Laravel 5.6
+        if: ( matrix.laravel == '5.6' )
+        run: |
+          composer require "phpunit/phpunit:^7.0" --no-update
+          composer require "laravel/framework:~5.6.0" --no-update
+          composer require "orchestra/database:~3.6.0" --no-update
+          composer require "orchestra/testbench:~3.6.0" --no-update
+
+      - name: Install dependencies for Laravel 5.7
+        if: ( matrix.laravel == '5.7' )
+        run: |
+          composer require "phpunit/phpunit:^7.0" --no-update
+          composer require "laravel/framework:~5.7.0" --no-update
+          composer require "orchestra/database:~3.7.0" --no-update
+          composer require "orchestra/testbench:~3.7.0" --no-update
+
+      - name: Install dependencies for Laravel 5.8
+        if: ( matrix.laravel == '5.8' )
+        run: |
+          composer require "phpunit/phpunit:^7.0" --no-update
+          composer require "laravel/framework:~5.8.0" --no-update
+          composer require "orchestra/database:~3.8.0" --no-update
+          composer require "orchestra/testbench:~3.8.0" --no-update
+
+      - name: Install dependencies for Laravel 6
+        if: ( matrix.laravel == '6.x' )
+        run: |
+          composer require "phpunit/phpunit:^8.3" --no-update
+          composer require "laravel/framework:^6.0" --no-update
+          composer require "orchestra/database:^4.0" --no-update
+          composer require "orchestra/testbench:^4.0" --no-update
+
+      - name: Install composer dependencies
+        run: composer install --no-suggest --no-progress --no-interaction --prefer-source
+
+      - name: Run unit tests
+        run: vendor/bin/phpunit --coverage-text
+        env:
+          TESTING_DB_PASS: 'test'
+          TESTING_DB_PORT: 13306
+
+      - name: Complete build on Code Climate
+        continue-on-error: true
+        run: ./cc-test-reporter after-build --coverage-input-type clover --prefix "${GITHUB_WORKSPACE}" --exit-code ${{ job.status == 'failure' }}
+        if: always()
+
+      - name: Upload coverage to Code Climate
+        continue-on-error: true
+        run: vendor/bin/test-reporter
