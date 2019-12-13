@@ -83,5 +83,8 @@
     },
     "config": {
         "discard-changes": true
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
     }
 }
