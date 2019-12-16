@@ -59,7 +59,7 @@
     },
     "require-dev": {
         "codeclimate/php-test-reporter": "dev-master",
-        "phpunit/phpunit": "~6.0|~7.0",
+        "phpunit/phpunit": "^6.0|^7.0|^8.0",
         "orchestra/testbench": "^3.5|^4.0"
     },
     "autoload": {
@@ -83,5 +83,8 @@
     },
     "config": {
         "discard-changes": true
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
     }
 }

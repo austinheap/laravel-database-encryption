@@ -5,7 +5,7 @@
  * @package     laravel-database-encryption
  * @link        https://github.com/austinheap/laravel-database-encryption
  * @author      Austin Heap <me@austinheap.com>
- * @version     v0.2.2
+ * @version     v0.3.0
  */
 
 namespace AustinHeap\Database\Encryption\Tests\Models;
@@ -39,7 +39,12 @@ abstract class RealModel extends Model
         );
 
         try {
-            $dsn        = sprintf('mysql:dbname=%s;host=%s;charset=utf8', DB::getDatabaseName(), env('TESTING_DB_HOST', '127.0.0.1'));
+            $dsn = sprintf(
+                'mysql:dbname=%s;host=%s;port=%s;charset=utf8',
+                DB::getDatabaseName(),
+                env('TESTING_DB_HOST', '127.0.0.1'),
+                env('TESTING_DB_PORT', 3306)
+            );
             $connection = new PDO($dsn, env('TESTING_DB_USER', 'root'), env('TESTING_DB_PASS', ''));
             $statement  = $connection->prepare($query);
 
