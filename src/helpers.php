@@ -3,7 +3,7 @@
  * src/helpers.php.
  *
  * @author      Austin Heap <me@austinheap.com>
- * @version     v0.2.1
+ * @version     v0.3.0
  */
 declare(strict_types=1);
 
@@ -94,5 +94,17 @@ if (! function_exists('dbdecrypt')) {
     function dbdecrypt(string $value): ?string
     {
         return database_decrypt($value);
+    }
+}
+
+if (! function_exists('str_random')) {
+
+    /**
+     * @param int $value
+     * @return string|null
+     */
+    function str_random(int $value = 16): ?string
+    {
+        return \Illuminate\Support\Str::random($value);
     }
 }

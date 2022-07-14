@@ -5,7 +5,7 @@
  * @package     laravel-database-encryption
  * @link        https://github.com/austinheap/laravel-database-encryption
  * @author      Austin Heap <me@austinheap.com>
- * @version     v0.2.1
+ * @version     v0.3.0
  */
 
 namespace AustinHeap\Database\Encryption\Tests\Console;
@@ -13,6 +13,7 @@ namespace AustinHeap\Database\Encryption\Tests\Console;
 use AustinHeap\Database\Encryption\Console\Commands\MigrateEncryptionCommand;
 use AustinHeap\Database\Encryption\Tests\DatabaseTestCase;
 use DatabaseEncryption;
+use Illuminate\Support\Str;
 use RuntimeException;
 
 /**
@@ -33,7 +34,7 @@ class MigrateEncryptionTest extends DatabaseTestCase
         {
             protected function setupKeys()
             {
-                $this->new_key = str_random(32);
+                $this->new_key = Str::random(32);
                 $this->tables  = ['test_models'];
             }
         };
@@ -64,7 +65,7 @@ class MigrateEncryptionTest extends DatabaseTestCase
             protected function setupKeys()
             {
                 $this->old_keys = [app('config')->get('app.key')];
-                $this->new_key  = str_random(32);
+                $this->new_key  = Str::random(32);
             }
         };
 
@@ -81,7 +82,7 @@ class MigrateEncryptionTest extends DatabaseTestCase
             protected function setupKeys()
             {
                 $this->old_keys = [app('config')->get('app.key')];
-                $this->new_key  = str_random(32);
+                $this->new_key  = Str::random(32);
                 $this->tables   = ['test_models'];
             }
         };
